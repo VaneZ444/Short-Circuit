@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+.title {
+    text-align: center;
+    font-family: "Montserrat";
+    color: #dddddd;
+    font-weight: 600;
+    font-style: italic;
+    font-size: 10;
+    -moz-user-select: -moz-none;
+    -o-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+body {
+    background-color: #111133;
+    display: inline;
+
+}
+
+canvas {
+    display: block;
+    border: 1px solid rgb(60, 2, 219);
+    margin-left: auto;
+    margin-right: auto;
+}
