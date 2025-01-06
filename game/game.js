@@ -372,8 +372,8 @@ class Shotgun extends Weapon {
                 this.pumping = true;
                 SoundEvents.playSound("shotgun_pump"); 
                 ParticleManager.spawn(
-                    Game.player.position.x + 15,
-                    Game.player.position.x + 15,
+                    Game.player.plComponent.x + 15,
+                    Game.player.plComponent.y + 15,
                     Game.player.plComponent.angle - Math.PI/4, 8, "shotgun");
                 setTimeout(() => {
                     this.pumping = false;
@@ -1356,6 +1356,7 @@ class Enemy {
         this.health = health;
         this.speed = speed;
         this.damage = damage;
+        this.deleted = false;
         this.enemySprite = new Image();
         this.isLoaded = false; // Track if the sprite is loaded
         this.colbox = new Vector2(colboxWidth, colboxHeight); // Collision box size
@@ -1436,9 +1437,12 @@ class Enemy {
     }
 
     delete() {
-        clearInterval(this.attackInterval);
-        this.attackInterval = null; // Clear the attack interval
-        EnemyManager.enemies.splice(EnemyManager.enemies.indexOf(this), 1);
+        if (!this.deleted){
+            this.deleted = true;
+            clearInterval(this.attackInterval);
+            this.attackInterval = null; // Clear the attack interval
+            EnemyManager.enemies.splice(EnemyManager.enemies.indexOf(this), 1);
+        }
     }
 
     render(ctx) {
@@ -1519,7 +1523,7 @@ class SmallEnemy extends Enemy {
             "sprites/enemy/small.png", // Sprite source
             "sprites/enemy/small_damaged.png", // Damaged sprite source
             1800 + (Game.player.difficulty - 1) * -500, // Attack interval
-            20, 20 // Collision box size (width, height)
+            28, 28 // Collision box size (width, height)
         );
     }
 
@@ -1551,7 +1555,7 @@ class MediumEnemy extends Enemy {
             "sprites/enemy/medium.png", // Sprite source
             "sprites/enemy/medium_damaged.png", // Damaged sprite source
             1800 + (Game.player.difficulty - 1) * -500, // Attack interval
-            44, 44 // Collision box size (width, height)
+            56, 56 // Collision box size (width, height)
         );
     }
 
@@ -1583,7 +1587,7 @@ class TurretEnemy extends Enemy {
             "sprites/enemy/turret.png", // Sprite source
             "sprites/enemy/turret_damaged.png", // Damaged sprite source
             1800 + (Game.player.difficulty - 1) * -500, // Attack interval
-            40, 40 // Collision box size (width, height)
+            65, 65 // Collision box size (width, height)
         );
     }
 
@@ -1667,7 +1671,7 @@ class Prop {
         this.type = type;
         this.propSprite = new Image();
         this.isLoaded = false; // Track if the image is loaded
-
+        this.deleted = false;
         // Set the image source and wait for it to load
         this.propSprite.src = source;
         this.propSprite.onload = () => {
@@ -1720,7 +1724,10 @@ class Prop {
     }
 
     delete() {
-        PropManager.props.splice(PropManager.props.indexOf(this), 1);
+        if (!this.deleted){
+            this.deleted = true;
+            PropManager.props.splice(PropManager.props.indexOf(this), 1);
+        }
     }
     getSaveData() {
         return {
@@ -1738,14 +1745,16 @@ class BoxWooden extends Prop {
     }
 
     onHit(bullet) {
+        if(!this.deleted){
         // Spawn a random item when hit
         let count = Math.ceil(Math.random()*10);
         for (let index = 0; index < count; index++) {
             ParticleManager.spawn(this.position.x + this.size.x/2, this.position.y + this.size.y/2, index, 5, 'wooden_chip')
         }
-        ItemManager.spawn(this.position.x + this.size.x/2, this.position.y + this.size.y/2, "random");
+        ItemManager.spawn(this.position.x+this.size.x/10, this.position.y + this.size.y/3, "random");
         this.delete();
         if (bullet) bullet.delete();
+        }
     }
 }
 class Chair1 extends Prop {
@@ -2280,10 +2289,15 @@ class Player {
     }
 
     restart() {
+        this.moveUp = false;
+        this.moveDown = false;
+        this.moveLeft = false;
+        this.moveRight = false;
         this.difficulty = Game.chosenDifficulty;
         this.moveSpeed = 2;
         this.aims = false;
-        this.plComponent = new PlayerComponent(61, 70, 269.5, -25);
+        this.plComponent = new PlayerComponent(61, 70, 285, 10);
+        this.position = new Vector2(this.plComponent.x, this.plComponent.y);
         this.health = 100;
         this.roomCounter = 0;
         PropManager.props = [];
@@ -2862,6 +2876,12 @@ class Game {
         }
     }
     static restart() {
+        for (let enemy of EnemyManager.enemies) {
+            if (enemy.attackInterval) {
+                clearInterval(enemy.attackInterval); // Clear the interval
+                enemy.attackInterval = null; // Optional: Set it to null to indicate it's cleared
+            }
+        }
         Game.state = 'Game'
         this.score = -100;
         this.roomCounter = 0;
