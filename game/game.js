@@ -295,10 +295,10 @@ class Pistol extends Weapon {
         if (Game.player.isReloading === false && this.maxAmmo !== this.currentAmmo) {
             Game.player.isReloading = true;
             Game.player.aims = false;
-            Game.player.moveSpeed = 1.5;
+            Game.player.currMoveSpeed = Game.player.speedReloading;
             SoundEvents.playSound("pistol_reload");
             setTimeout(() => {
-                Game.player.moveSpeed = 2;
+                Game.player.currMoveSpeed =  Game.player.speedDefault;;
                 Game.player.isReloading = false;
                 this.currentAmmo = 8;
             }, this.reloadDuration);
@@ -394,7 +394,7 @@ class Shotgun extends Weapon {
         if (this.ammoReserve > 0 && Game.player.isReloading === false && this.maxAmmo !== this.currentAmmo) {
             Game.player.isReloading = true;
             Game.player.aims = false;
-            Game.player.moveSpeed = 1.5;
+            Game.player.currMoveSpeed =  Game.player.speedReloadin;
             if (this.shotgunChamber === 0) {
                 await this.pump(); 
             }
@@ -405,7 +405,7 @@ class Shotgun extends Weapon {
                 }
             }
 
-            Game.player.moveSpeed = 2;
+            Game.player.currMoveSpeed =  Game.player.speedDefault;;
             Game.player.isReloading = false;
         }
     }
@@ -467,12 +467,12 @@ class Rifle extends Weapon {
             let ammoNeeded = this.maxAmmo - this.currentAmmo;
             let ammoToAdd = Math.min(ammoNeeded, this.ammoReserve);
             Game.player.aims = false;
-            Game.player.moveSpeed = 1.5;
+            Game.player.currMoveSpeed =  Game.player.speedReloadin;
             SoundEvents.playSound("rifle_reload");
             
             setTimeout(() => {
                 Game.player.isReloading = false;
-                Game.player.moveSpeed = 2;
+                Game.player.currMoveSpeed =  Game.player.speedDefault;;
                 this.currentAmmo += ammoToAdd;
                 this.ammoReserve -= ammoToAdd;
             }, 3343);
@@ -480,34 +480,31 @@ class Rifle extends Weapon {
     }
 }
 class MeleeAttack {
-    constructor(player) {
+    constructor(player, damage = 1, cooldownSeconds = 1) {
         this.player = player;
         this.sprite = new Image();
         this.sprite.src = "sprites/player/swing.png"; 
         this.width = 60; 
         this.height = 80; 
         this.angle = 0; 
+        this.meleeMoveSpeed = this.player.speedMelee;
         this.swingAngle = 0;
         this.swingSpeed = 1.2; 
         this.isSwinging = false; 
-        this.damage = 2; 
+        this.damage = damage; 
         this.swingCenterX;
         this.swingCenterY;
         this.damaged = false;
-
-        
         this.colboxOffsetX = 25; 
         this.colboxOffsetY = 25; 
-
-        
         this.cooldown = 0; 
-        this.cooldownDuration = 60; 
+        this.cooldownDuration = cooldownSeconds * 60; 
         this.meleeHitbox;
     }
 
     startSwing() {
-        
         if (this.cooldown <= 0 && !this.isSwinging) {
+            console.log('swing started')
             this.damaged = false;
             this.isSwinging = true;
             this.swingAngle = +Math.PI / 4; 
@@ -517,12 +514,16 @@ class MeleeAttack {
     }
 
     update() {
-        
         if (this.cooldown > 0) {
+            const progress = 1 - (this.cooldown / 60);
+            this.player.currMoveSpeed = this.player.speedMelee + (this.player.speedDefault - this.player.speedMelee) * progress;
             this.cooldown -= 1;
+        } else {
+            this.player.currMoveSpeed = this.player.speedDefault;
         }
 
         if (this.isSwinging) {
+            this.player.currMoveSpeed = this.meleeMoveSpeed;
             this.angle = this.player.plComponent.angle;
             this.swingAngle -= this.swingSpeed; 
 
@@ -531,6 +532,7 @@ class MeleeAttack {
 
             
             if (this.swingAngle <= -Math.PI / 1) {
+                this.player.currMoveSpeed = this.player.speedDefault;
                 this.isSwinging = false;
             }
         }
@@ -593,10 +595,7 @@ class MeleeAttack {
                 this.width,
                 this.height
             );
-            ctx.restore();
-
-            
-            
+            ctx.restore(); 
         }
     }
 
@@ -2188,11 +2187,15 @@ class Player {
         this.sprite = "sprites/player/pistol_idle.png";
         this.plComponent = new PlayerComponent(61, 70, 285, 10);
         this.position = new Vector2(this.plComponent.x, this.plComponent.y); 
-        this.velocity = new Vector2(0, 0); 
-        this.moveSpeed = 2; 
+        this.velocity = new Vector2(0, 0);
+        this.speedDefault = 2
+        this.speedMelee = 0.8;
+        this.speedSighted = 0.8;
+        this.speedReloading = 1.5; 
+        this.currMoveSpeed = this.speedDefault; 
         this.size = new Vector2(30, 30);
         this.currentWeapon = this.weapons.pistol; 
-        this.meleeAttack = new MeleeAttack(this); 
+        this.meleeAttack = new MeleeAttack(this,1,1); 
 
         
         this.colboxOffsetX = -15; 
@@ -2225,7 +2228,7 @@ class Player {
         
         if (this.velocity.x !== 0 || this.velocity.y !== 0) {
             this.velocity.normalize();
-            this.velocity.multiply(this.moveSpeed); 
+            this.velocity.multiply(this.currMoveSpeed); 
         }
     }
 
@@ -2253,14 +2256,14 @@ class Player {
     startAiming() {
         if (this.isReloading === false) {
             this.aims = true;
-            this.moveSpeed = 0.8; 
+            this.currMoveSpeed = Game.player.speedSighted; 
         }
     }
 
     stopAiming() {
         if (this.isReloading === false) {
             this.aims = false;
-            this.moveSpeed = 2; 
+            this.currMoveSpeed = Game.player.speedDefault;
         }
     }
 
@@ -2287,7 +2290,7 @@ class Player {
         this.moveLeft = false;
         this.moveRight = false;
         this.difficulty = Game.chosenDifficulty;
-        this.moveSpeed = 2;
+        this.currMoveSpeed =  Game.player.speedDefault;;
         this.aims = false;
         this.plComponent = new PlayerComponent(61, 70, 285, 10);
         this.position = new Vector2(this.plComponent.x, this.plComponent.y);
