@@ -394,7 +394,7 @@ class Shotgun extends Weapon {
         if (this.ammoReserve > 0 && Game.player.isReloading === false && this.maxAmmo !== this.currentAmmo) {
             Game.player.isReloading = true;
             Game.player.aims = false;
-            Game.player.currMoveSpeed =  Game.player.speedReloadin;
+            Game.player.currMoveSpeed =  Game.player.speedReloading;
             if (this.shotgunChamber === 0) {
                 await this.pump(); 
             }
@@ -467,7 +467,7 @@ class Rifle extends Weapon {
             let ammoNeeded = this.maxAmmo - this.currentAmmo;
             let ammoToAdd = Math.min(ammoNeeded, this.ammoReserve);
             Game.player.aims = false;
-            Game.player.currMoveSpeed =  Game.player.speedReloadin;
+            Game.player.currMoveSpeed =  Game.player.speedReloading;
             SoundEvents.playSound("rifle_reload");
             
             setTimeout(() => {
