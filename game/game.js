@@ -51,7 +51,7 @@ class Collider {
     }
 
     static resolveCollision(objA, objB) {
-        // Calculate overlap on both axes
+        
         let overlapX = Math.min(
             Math.abs(objA.position.x + objA.size.x - objB.position.x),
             Math.abs(objB.position.x + objB.size.x - objA.position.x)
@@ -61,7 +61,7 @@ class Collider {
             Math.abs(objB.position.y + objB.size.y - objA.position.y)
         );
 
-        // Resolve collision along the axis with the smallest overlap
+        
         if (overlapX < overlapY) {
             if (objA.position.x < objB.position.x) {
                 objA.position.x = objB.position.x - objA.size.x;
@@ -124,8 +124,8 @@ class SoundEvents {
         SoundEvents.sounds.melody.play();
         SoundEvents.sounds.melody.addEventListener('ended', () => {
             if (SoundEvents.musicEnabled) {
-                SoundEvents.sounds.melody.currentTime = 0; // Сбрасываем время воспроизведения
-                SoundEvents.sounds.melody.play(); // Запускаем воспроизведение снова
+                SoundEvents.sounds.melody.currentTime = 0; 
+                SoundEvents.sounds.melody.play(); 
             }
         }, false);
     }
@@ -143,46 +143,46 @@ class InputEvents{
         let key = event.keyCode;
         if (Game.state === 'Game') {
             switch (key) {
-                case 27: // Escape
+                case 27: 
                     Game.pause();
                     break;
             
-                case 87: // W (Up)
+                case 87: 
                     Game.player.moveUp = true;
                     break;
 
-                case 83: // S (Down)
+                case 83: 
                     Game.player.moveDown = true;
                     break;
 
-                case 65: // A (Left)
+                case 65: 
                     Game.player.moveLeft = true;
                     break;
 
-                case 68: // D (Right)
+                case 68: 
                     Game.player.moveRight = true;
                     break;
 
-                case 16: // Shift
+                case 16: 
                     Game.player.startAiming();
                     break;
 
-                case 49: // 1 (Pistol)
+                case 49: 
                     Game.player.switchWeapon('pistol');
                     break;
             
-                case 50: // 2 (Shotgun)
+                case 50: 
                     Game.player.switchWeapon('shotgun');
                     break;
             
-                case 51: // 3 (Rifle)
+                case 51: 
                     Game.player.switchWeapon('rifle');
                     break;
             
-                case 82: // R (Reload)
+                case 82: 
                     Game.player.currentWeapon.reload();
                     break;
-                case 81: // F key for melee attack
+                case 81: 
                     Game.player.meleeAttack.startSwing();
                     break;
                 default:
@@ -196,19 +196,19 @@ class InputEvents{
         let key = event.keyCode;
         if (Game.state === 'Game') {
             switch (key) {
-                case 87: // w
+                case 87: 
                     Game.player.moveUp = false;
                     break;
-                case 83: // s
+                case 83: 
                     Game.player.moveDown = false;
                     break;
-                case 65: // a
+                case 65: 
                     Game.player.moveLeft = false;
                     break;
-                case 68: // d
+                case 68: 
                     Game.player.moveRight = false;
                     break;
-                case 16: // shift
+                case 16: 
                     Game.player.stopAiming();
                     break;
                 default:
@@ -237,26 +237,26 @@ class InputEvents{
 }
 class Weapon {
     constructor(name, maxAmmo, currentAmmo, ammoReserve, reloadDuration, offset = 0, isUnlocked = false) {
-        this.name = name; // Название оружия
-        this.maxAmmo = maxAmmo; // Максимальное количество патронов в магазине
-        this.currentAmmo = currentAmmo; // Текущее количество патронов в магазине
-        this.ammoReserve = ammoReserve; // Запас патронов
-        this.isUnlocked = isUnlocked; // Найдено ли оружие
-        this.reloadDuration = reloadDuration; //время перезарядки
+        this.name = name; 
+        this.maxAmmo = maxAmmo; 
+        this.currentAmmo = currentAmmo; 
+        this.ammoReserve = ammoReserve; 
+        this.isUnlocked = isUnlocked; 
+        this.reloadDuration = reloadDuration; 
         this.offset = offset;
     }
 
-    // Метод для перезарядки
+    
     reload() {
         console.log(`no reload found for ${this.name}, used default reload`);
     }
 
-    // Метод для стрельбы
+    
     shoot() {
         console.log(`no shooting function found for ${this.name}, used default shoot`);
     }
 
-    // Метод для разблокировки оружия
+    
     unlock() {
         this.isUnlocked = true;
         this.currentAmmo = this.maxAmmo;
@@ -265,7 +265,7 @@ class Weapon {
         return this._currentAmmo;
     }
 
-    // Сеттер для текущего количества патронов
+    
     set currentAmmo(value) {
         if (value >= 0 && value <= this.maxAmmo) {
             this._currentAmmo = value;
@@ -274,11 +274,11 @@ class Weapon {
         }
     }
 
-    // Геттер для запаса патронов
+    
     get ammoReserve() {
         return this._ammoReserve;
     }
-    // Сеттер для запаса патронов
+    
     set ammoReserve(value) {
         if (value >= 0) {
             this._ammoReserve = value;
@@ -289,7 +289,7 @@ class Weapon {
 }
 class Pistol extends Weapon {
     constructor() {
-        super("pistol", 8, 8, Infinity, 2455, 6.5, true); // Пистолет всегда разблокирован
+        super("pistol", 8, 8, Infinity, 2455, 6.5, true); 
     }
     reload() {
         if (Game.player.isReloading === false && this.maxAmmo !== this.currentAmmo) {
@@ -308,14 +308,14 @@ class Pistol extends Weapon {
         if (this.currentAmmo > 0 && Game.player.isReloading === false) {
             this.currentAmmo--;
             BulletManager.shootPlayerBullet(
-                Game.player.position.x + 15, // X position
-                Game.player.position.y + 15, // Y position
-                Game.player.plComponent.angle // Use the player's angle
+                Game.player.position.x + Game.player.size.x/2, 
+                Game.player.position.y + Game.player.size.y/2, 
+                Game.player.plComponent.angle
             );
             ParticleManager.spawn(
-                Game.player.plComponent.x + 15,
-                Game.player.plComponent.y + 15,
-                Game.player.plComponent.angle - Math.PI / 4, // Adjust Particle angle
+                Game.player.position.x + Game.player.size.x/2, 
+                Game.player.position.y + Game.player.size.y/2, 
+                Game.player.plComponent.angle - Math.PI / 4, 
                 15,
                 "pistol"
             );
@@ -327,12 +327,12 @@ class Pistol extends Weapon {
 }
 class Shotgun extends Weapon {
     constructor() {
-        super("shotgun", 5, 0, 0, 0, 10, false); // Дробовик изначально заблокирован
+        super("shotgun", 5, 0, 0, 0, 10, false); 
         this.shotgunChamber = 1;
         this.pumping = false;
     }
 
-    // Переопределяем метод стрельбы для дробовика
+    
     shoot() {
         if ((this.currentAmmo > 0 || this.shotgunChamber) && !Game.player.isReloading) {
             if (this.shotgunChamber === 1 && !this.pumping) {
@@ -340,9 +340,9 @@ class Shotgun extends Weapon {
                 PlayerComponent.sprite = "sprites/player/shotgun_shoot.png";
                 SoundEvents.playSound("shotgun_shoot");
                 BulletManager.shootBuckshot(
-                    Game.player.position.x + 15, // X position
-                    Game.player.position.y + 15, // Y position
-                    Game.player.plComponent.angle // Use the player's angle
+                    Game.player.position.x + Game.player.size.x/2, 
+                    Game.player.position.y + Game.player.size.y/2, 
+                    Game.player.plComponent.angle
                 );
             } else {
                 this.pump();
@@ -352,19 +352,19 @@ class Shotgun extends Weapon {
         }
     }
 
-    // Добавление патрона
+    
     addShell() {
         return new Promise((resolve) => {
             SoundEvents.playSound("shotgun_add_shell");
             setTimeout(() => {
                 this.currentAmmo += 1;
                 this.ammoReserve -= 1;
-                resolve(); // Сигнализируем, что патрон добавлен
+                resolve(); 
             }, 400);
         });
     }
 
-    // Взвод дробовика
+    
     pump() {
         return new Promise((resolve) => {
             if (this.currentAmmo > 0 && !this.pumping) {
@@ -378,30 +378,30 @@ class Shotgun extends Weapon {
                 setTimeout(() => {
                     this.pumping = false;
                     this.shotgunChamber = 1;
-                    resolve(); // Сигнализируем, что взвод завершен
+                    resolve(); 
                 }, 400);
             } else {
-                resolve(); // Если взвод не нужен, сразу разрешаем
+                resolve(); 
             }
         });
     }
 
-    // Перезарядка
+    
     async reload() {
         if (this.shotgunChamber === 0 && this.currentAmmo !== 0) {
-            await this.pump(); // Ждем, пока взвод завершится
+            await this.pump(); 
         }
         if (this.ammoReserve > 0 && Game.player.isReloading === false && this.maxAmmo !== this.currentAmmo) {
             Game.player.isReloading = true;
             Game.player.aims = false;
             Game.player.moveSpeed = 1.5;
             if (this.shotgunChamber === 0) {
-                await this.pump(); // Ждем, пока взвод завершится
+                await this.pump(); 
             }
             while (this.currentAmmo < this.maxAmmo && this.ammoReserve > 0) {
-                await this.addShell(); // Ждем, пока патрон добавится
+                await this.addShell(); 
                 if (this.shotgunChamber === 0) {
-                    await this.pump(); // Ждем, пока взвод завершится
+                    await this.pump(); 
                 }
             }
 
@@ -412,47 +412,47 @@ class Shotgun extends Weapon {
 }
 class Rifle extends Weapon {
     constructor() {
-        super("rifle", 25, 0, 0, 343, 11,  false); // Макс патронов: 25, текущие: 25, запас: 0, звук перезарядки: 3343 мс
-        this.isShooting = false; // Флаг для автоматической стрельбы
-        this.shootInterval = null; // Интервал для автоматической стрельбы
+        super("rifle", 25, 0, 0, 343, 11,  false); 
+        this.isShooting = false; 
+        this.shootInterval = null; 
     }
 
-    // Метод для стрельбы
+    
     shoot() {
         if (this.currentAmmo > 0) {
             this.currentAmmo--;
             SoundEvents.playSound("rifle_shoot");
             BulletManager.shootPlayerBullet(
-                Game.player.position.x + 15, // X position
-                Game.player.position.y + 15, // Y position
-                Game.player.plComponent.angle // Use the player's angle
+                Game.player.position.x + Game.player.size.x/2, 
+                Game.player.position.y + Game.player.size.y/2, 
+                Game.player.plComponent.angle
             );
             ParticleManager.spawn(
-                Game.player.position.x + 15,
-                Game.player.position.y + 15,
-                Game.player.plComponent.angle - Math.PI/ 4, // Adjust Particle angle
+                Game.player.position.x + Game.player.size.x/2,
+                Game.player.position.y + Game.player.size.y/2,
+                Game.player.plComponent.angle - Math.PI/ 4, 
                 20,
                 "rifle"
             );
         } else {
             SoundEvents.playSound("click");
-            this.stopShooting(); // Останавливаем стрельбу, если патроны закончились
+            this.stopShooting(); 
         }
         
     }
 
-    // Метод для начала автоматической стрельбы
+    
     startShooting() {
         if (!this.isShooting) {
             this.isShooting = true;
             if (this.currentAmmo > 0) this.shoot();
             this.shootInterval = setInterval(() => {
                 this.shoot();
-            }, 75); // Интервал между выстрелами (в миллисекундах)
+            }, 75); 
         }
     }
 
-    // Метод для остановки автоматической стрельбы
+    
     stopShooting() {
         if (this.isShooting) {
             clearInterval(this.shootInterval);
@@ -460,7 +460,7 @@ class Rifle extends Weapon {
         }
     }
 
-    // Переопределяем метод перезарядки
+    
     reload() {
         if (this.ammoReserve > 0 && Game.player.isReloading === false && this.maxAmmo !== this.currentAmmo) {
             Game.player.isReloading = true;
@@ -469,7 +469,7 @@ class Rifle extends Weapon {
             Game.player.aims = false;
             Game.player.moveSpeed = 1.5;
             SoundEvents.playSound("rifle_reload");
-            // Задержка перед обновлением состояния оружия
+            
             setTimeout(() => {
                 Game.player.isReloading = false;
                 Game.player.moveSpeed = 2;
@@ -483,53 +483,53 @@ class MeleeAttack {
     constructor(player) {
         this.player = player;
         this.sprite = new Image();
-        this.sprite.src = "sprites/player/swing.png"; // Path to your swing sprite
-        this.width = 60; // Width of the sprite
-        this.height = 80; // Height of the sprite
-        this.angle = 0; // Current angle of rotation
+        this.sprite.src = "sprites/player/swing.png"; 
+        this.width = 60; 
+        this.height = 80; 
+        this.angle = 0; 
         this.swingAngle = 0;
-        this.swingSpeed = 1.2; // Speed of the swing (in radians per frame)
-        this.isSwinging = false; // Whether the attack is active
-        this.damage = 2; // Damage dealt by the attack
+        this.swingSpeed = 1.2; 
+        this.isSwinging = false; 
+        this.damage = 2; 
         this.swingCenterX;
         this.swingCenterY;
         this.damaged = false;
 
-        // Collision box offsets (adjust these values to align the hitbox with the sprite)
-        this.colboxOffsetX = 25; // Adjust X offset
-        this.colboxOffsetY = 25; // Adjust Y offset
+        
+        this.colboxOffsetX = 25; 
+        this.colboxOffsetY = 25; 
 
-        // Cooldown properties
-        this.cooldown = 0; // Current cooldown time
-        this.cooldownDuration = 60; // Cooldown duration in milliseconds (1 second)
+        
+        this.cooldown = 0; 
+        this.cooldownDuration = 60; 
         this.meleeHitbox;
     }
 
     startSwing() {
-        // Check if the cooldown has expired
+        
         if (this.cooldown <= 0 && !this.isSwinging) {
             this.damaged = false;
             this.isSwinging = true;
-            this.swingAngle = +Math.PI / 4; // Start the swing from the right shoulder
-            this.cooldown = this.cooldownDuration; // Reset the cooldown
+            this.swingAngle = +Math.PI / 4; 
+            this.cooldown = this.cooldownDuration; 
             SoundEvents.playSound("swing");
         }
     }
 
     update() {
-        // Update the cooldown timer
+        
         if (this.cooldown > 0) {
             this.cooldown -= 1;
         }
 
         if (this.isSwinging) {
             this.angle = this.player.plComponent.angle;
-            this.swingAngle -= this.swingSpeed; // Rotate the swing sprite
+            this.swingAngle -= this.swingSpeed; 
 
-            // Check for collisions with enemies or breakable objects
+            
             this.checkCollisions();
 
-            // End the swing when it reaches the left shoulder
+            
             if (this.swingAngle <= -Math.PI / 1) {
                 this.isSwinging = false;
             }
@@ -538,16 +538,16 @@ class MeleeAttack {
 
     checkCollisions() {
         if (!this.damaged) {
-            // Define the melee attack hitbox
+            
             this.meleeHitbox = {
                 position: new Vector2(
-                    this.player.position.x - this.colboxOffsetX, // Adjust for player's collision box offset
-                    this.player.position.y - this.colboxOffsetY, // Adjust for player's collision box offset
+                    this.player.position.x - this.colboxOffsetX,
+                    this.player.position.y - this.colboxOffsetY,
                 ),
-                size: new Vector2(80, 80) // Size of the melee attack hitbox (adjust as needed)
+                size: new Vector2(80, 80) 
             };
 
-            // Check collisions with enemies
+            
             for (let enemy of EnemyManager.enemies) {
                 if (Collider.checkCollision(this.meleeHitbox, enemy)) {
                     enemy.health -= this.damage;
@@ -559,18 +559,18 @@ class MeleeAttack {
                 }
             }
 
-            // Check collisions with breakable props (e.g., wooden boxes, soda machines)
+            
             for (let prop of PropManager.props) {
                 if (Collider.checkCollision(this.meleeHitbox, prop)) {
                     prop.onHit();
                 }
             }
 
-            // Check collisions with enemy bullets
+            
             for (let bullet of BulletManager.bullets) {
                 if (bullet.type === "enemy" && Collider.checkCollision(this.meleeHitbox, bullet)) {
                     SoundEvents.playSound("blade_hit");
-                    bullet.delete(); // Destroy the bullet
+                    bullet.delete(); 
                     this.damaged = true;
                 }
             }
@@ -579,38 +579,37 @@ class MeleeAttack {
 
     render(ctx) {
         if (this.isSwinging) {
-            // Calculate the player's center
             const playerCenterX = this.player.position.x + this.player.size.x / 2;
             const playerCenterY = this.player.position.y + this.player.size.y / 2;
 
-            // Render the swing sprite
+            
             ctx.save();
-            ctx.translate(playerCenterX, playerCenterY); // Translate to the player's center
-            ctx.rotate(this.angle + this.swingAngle + Math.PI / 2); // Adjust rotation to match the swing direction
+            ctx.translate(playerCenterX, playerCenterY);
+            ctx.rotate(this.angle + this.swingAngle + Math.PI / 2); 
             ctx.drawImage(
                 this.sprite,
-                -this.width / 2, // X offset to center the sprite
-                -this.height / 2, // Y offset to center the sprite
+                -this.width / 2, 
+                -this.height / 2, 
                 this.width,
                 this.height
             );
             ctx.restore();
 
-            // Debug rendering for the melee attack hitbox
-            // this.renderDebugMeleeHitbox(ctx);
+            
+            
         }
     }
 
     renderDebugMeleeHitbox(ctx) {
         if (this.isSwinging) {
-            // Render the debug hitbox
+            
             ctx.save();
-            ctx.fillStyle = "rgba(0, 255, 0, 0.5)"; // Green color with 50% transparency
+            ctx.fillStyle = "rgba(0, 255, 0, 0.5)"; 
             ctx.fillRect(
-                this.meleeHitbox.position.x, // X position of the hitbox
-                this.meleeHitbox.position.y, // Y position of the hitbox
-                this.meleeHitbox.size.x, // Width of the hitbox
-                this.meleeHitbox.size.y  // Height of the hitbox
+                this.meleeHitbox.position.x, 
+                this.meleeHitbox.position.y, 
+                this.meleeHitbox.size.x, 
+                this.meleeHitbox.size.y  
             );
             ctx.restore();
         }
@@ -619,7 +618,7 @@ class MeleeAttack {
 class ItemManager {
     static items = [];
 
-    // List of random item types
+    
     static randomItemTypes = ["medkit", "rifleAmmo", "shotgunAmmo", "shotgun", "rifle", "sodacan"];
 
     static getItemClass(type) {
@@ -637,7 +636,7 @@ class ItemManager {
             case "rifle":
                 return RifleItem;
             case "random":
-                // Randomly select an item type
+                
                 const randomIndex = Math.floor(Math.random() * ItemManager.randomItemTypes.length);
                 const randomType = ItemManager.randomItemTypes[randomIndex];
                 return ItemManager.getItemClass(randomType);
@@ -669,44 +668,44 @@ class ItemManager {
     static loadSaveData(data) {
         ItemManager.items = data.roomCurrItems ? data.roomCurrItems.map(itemData => {
             if (!itemData.type) {
-                console.error("Invalid item data:", itemData); // Log invalid data
-                return null; // Skip this item
+                console.error("Invalid item data:", itemData); 
+                return null; 
             }
             const itemClass = ItemManager.getItemClass(itemData.type);
             return new itemClass(itemData.x, itemData.y);
-        }).filter(item => item !== null) : []; // Filter out null items
+        }).filter(item => item !== null) : []; 
     }
 }
 class Item {
     constructor(x, y, type, source) {
-        this.position = new Vector2(x-5, y-5); // Use Vector2 for position
+        this.position = new Vector2(x-5, y-5); 
         this.type = type;
         this.isPicked = false;
         this.itemSprite = new Image();
-        this.isLoaded = false; // Track if the image is loaded
+        this.isLoaded = false; 
 
-        // Set the image source and wait for it to load
+        
         this.itemSprite.src = source;
         this.itemSprite.onload = () => {
             this.isLoaded = true;
-            // Set size based on sprite dimensions
+            
             this.size = new Vector2(this.itemSprite.width+10, this.itemSprite.height+10);
         };
         this.itemSprite.onerror = () => {
             console.error(`Failed to load image: ${source}`);
         };
 
-        // Default size (can be overridden by specific items)
-        this.size = new Vector2(32, 32); // Default size for items
+        
+        this.size = new Vector2(32, 32); 
     }
 
     update() {
-        // Check collision with player using AABB
+        
         if (Collider.checkCollision(this, Game.player)) {
             this.onPickup();
         }
 
-        // Delete item if picked up
+        
         if (this.isPicked) {
             this.delete();
         }
@@ -718,7 +717,7 @@ class Item {
 
     render(ctx) {
         if (!this.isLoaded) {
-            return; // Skip rendering if the image is not loaded
+            return; 
         }
         
         ctx.save();
@@ -733,7 +732,7 @@ class Item {
 
     getSaveData() {
         return {
-            type: this.type, // Ensure this is included
+            type: this.type, 
             x: this.position.x,
             y: this.position.y,
             isPicked: this.isPicked
@@ -828,7 +827,7 @@ class Component {
         this.image = new Image();
     }
 
-    // Polymorphic update method
+    
     render(ctx) {
         ctx.save();
         ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
@@ -846,9 +845,9 @@ class PlayerComponent extends Component {
         super(width, height, x, y);
         this.angle = 0;
 
-        // Collision box offsets (adjust these values to align the colbox with the sprite)
-        this.colboxOffsetX = -15; // Adjust X offset
-        this.colboxOffsetY = -5; // Adjust Y offset
+        
+        this.colboxOffsetX = -15; 
+        this.colboxOffsetY = -5; 
 
         this.setupMouseMoveListener();
     }
@@ -867,9 +866,8 @@ class PlayerComponent extends Component {
     }
 
     calculateAngle(mouseX, mouseY) {
-        // Calculate the angle based on the player's actual center
-        let deltaX = mouseX - (Game.player.position.x + 15); // Use the player's actual center
-        let deltaY = mouseY - (Game.player.position.y + 15); // Use the player's actual center
+        let deltaX = mouseX - (Game.player.position.x + Game.player.size.x/2);
+        let deltaY = mouseY - (Game.player.position.y + Game.player.size.y/2);
         this.angle = Math.atan2(deltaY, deltaX) + Math.PI / 2;
     }
 
@@ -897,19 +895,18 @@ class PlayerComponent extends Component {
             }
         }
 
-        // Update the player's position in the component
         this.x = Game.player.position.x + this.colboxOffsetX;
         this.y = Game.player.position.y + this.colboxOffsetY;
 
         for (let bullet of BulletManager.bullets) {
             if (bullet.type !== "player") {
-                // Create a temporary object for the bullet to use with Collider.checkCollision
+                
                 const bulletObj = {
                     position: new Vector2(bullet.x, bullet.y),
                     size: new Vector2(bullet.size.x, bullet.size.y)
                 };
 
-                // Check collision between the bullet and the player
+                
                 if (Collider.checkCollision(bulletObj, Game.player)) {
                     let dmg = Math.ceil(Math.random() * 15 + 10 * (Game.player.difficulty - 1));
                     SoundEvents.playSound("hit_bullet");
@@ -922,62 +919,59 @@ class PlayerComponent extends Component {
     }
 
     renderDebugColbox(ctx) {
-        // Set the collision box color and transparency
+        
         ctx.save();
-        ctx.fillStyle = "rgba(255, 0, 0, 0.5)"; // Red color with 50% transparency
-        ctx.strokeStyle = "red"; // Border color
-        ctx.lineWidth = 2; // Border thickness
+        ctx.fillStyle = "rgba(255, 0, 0, 0.5)"; 
+        ctx.strokeStyle = "red"; 
+        ctx.lineWidth = 2; 
 
-        // Draw the collision box at the adjusted position
+        
         ctx.fillRect(
-            this.x - this.colboxOffsetX, // X position of the collision box
-            this.y - this.colboxOffsetY, // Y position of the collision box
-            Game.player.size.x, // Width of the collision box
-            Game.player.size.y // Height of the collision box
+            this.x - this.colboxOffsetX, 
+            this.y - this.colboxOffsetY, 
+            Game.player.size.x, 
+            Game.player.size.y 
         );
 
-        // Draw the border of the collision box
+        
         ctx.strokeRect(
-            this.x - this.colboxOffsetX, // X position of the collision box
-            this.y - this.colboxOffsetY, // Y position of the collision box
-            Game.player.size.x, // Width of the collision box
-            Game.player.size.y  // Height of the collision box
+            this.x - this.colboxOffsetX, 
+            this.y - this.colboxOffsetY, 
+            Game.player.size.x, 
+            Game.player.size.y  
         );
 
         ctx.restore();
     }
 
     render(ctx) {
-        // Render the player sprite
+        
         ctx.save();
         ctx.imageSmoothingEnabled = false;
 
-        // Translate to the player's actual center (1/4 of the sprite's height above the sprite's center)
         const playerCenterX = this.x + this.width / 2;
-        const playerCenterY = this.y + this.height / 4; // Adjusted for the player's actual center
+        const playerCenterY = this.y + this.height / 4;
         ctx.translate(playerCenterX, playerCenterY);
 
-        // Rotate the canvas around the player's actual center
         ctx.rotate(this.angle);
 
-        // Draw the player sprite, offset from the player's actual center
         ctx.drawImage(
-            this.image, // The player sprite image
-            -this.width / 2, // X offset to center the sprite horizontally
-            -this.height * 3 / 4, // Y offset to align the sprite with the player's actual center
-            this.width, // Sprite width
-            this.height // Sprite height
+            this.image, 
+            -this.width / 2, 
+            -this.height * 3 / 4,
+            this.width, 
+            this.height 
         );
 
         ctx.restore();
 
-        // Render the debug collision box
-        //this.renderDebugColbox(ctx);
+        
+        
     }
 }
 class HUDTextComponent extends Component {
     constructor() {
-        super(0, 0, 0, 0); // Width, height, x, y are not needed for text rendering
+        super(0, 0, 0, 0); 
     }
 
     render(ctx) {
@@ -986,12 +980,12 @@ class HUDTextComponent extends Component {
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.fillStyle = "#FFFFFF";
         ctx.font = "15pt PixelCode";
-        ctx.fillText(`➕ ${Game.player.health}`, 500, 40); // Adjusted y-coordinate for screen space
-        ctx.fillText(`${Game.player.weapons["rifle"].currentAmmo}/${Game.player.weapons["rifle"].ammoReserve}`, 300, 80); // Adjusted y-coordinate
-        ctx.fillText(`${Game.player.weapons["pistol"].currentAmmo}/∞`, 30, 80); // Adjusted y-coordinate
-        ctx.fillText(`${Game.player.weapons["shotgun"].currentAmmo}/${Game.player.weapons["shotgun"].ammoReserve}`, 140, 80); // Adjusted y-coordinate
-        ctx.fillText(`Счет: ${Game.score}`, 430, 105); // Adjusted y-coordinate
-        ctx.fillText(`Комната: ${Game.roomCounter}`, 430, 75); // Adjusted y-coordinate
+        ctx.fillText(`➕ ${Game.player.health}`, 500, 40); 
+        ctx.fillText(`${Game.player.weapons["rifle"].currentAmmo}/${Game.player.weapons["rifle"].ammoReserve}`, 300, 80); 
+        ctx.fillText(`${Game.player.weapons["pistol"].currentAmmo}/∞`, 30, 80); 
+        ctx.fillText(`${Game.player.weapons["shotgun"].currentAmmo}/${Game.player.weapons["shotgun"].ammoReserve}`, 140, 80); 
+        ctx.fillText(`Счет: ${Game.score}`, 430, 105); 
+        ctx.fillText(`Комната: ${Game.roomCounter}`, 430, 75); 
         ctx.restore();
     }
 }
@@ -1149,23 +1143,23 @@ class Bullet {
     constructor(x, y, angle, speed, type) {
         this.position = new Vector2(x, y);
         if (type === 'enemy'){
-            this.size = new Vector2(4, 4); // Bullet size
+            this.size = new Vector2(4, 4); 
         } else {
             this.size = new Vector2(2, 2);
         }
         this.angle = angle;
         this.speed = speed;
         this.type = type;
-        this.lifetime = 2000; // Time before the bullet disappears
+        this.lifetime = 2000; 
     }
 
     update() {
-        // Update position based on angle and speed
+        
         this.position.x += this.speed * Math.cos(this.angle);
         this.position.y += this.speed * Math.sin(this.angle);
         this.lifetime--;
 
-        // Delete bullet if lifetime is over
+        
         if (this.lifetime <= 0) {
             this.delete();
         }
@@ -1176,7 +1170,7 @@ class Bullet {
     }
 
     render(ctx) {
-        ctx.fillStyle = this.type === "player" ? "orange" : "red"; // Player bullets are orange, enemy bullets are red
+        ctx.fillStyle = this.type === "player" ? "orange" : "red"; 
         ctx.fillRect(this.position.x, this.position.y, this.size.x, this.size.y);
     }
     getSaveData() {
@@ -1231,10 +1225,10 @@ class Particle {
     constructor(x, y, angle, speed, type) {
         this.x = x;
         this.y = y;
-        this.angle = angle + Math.random()*Math.PI/10; // Adjust angle for Particle ejection
+        this.angle = angle + Math.random()*Math.PI/10; 
         this.speed = speed;
-        this.lifetime = 70; // Time before the Particle disappears
-        this.type = type; // Type of Particle (pistol, rifle, shotgun)
+        this.lifetime = 70; 
+        this.type = type; 
         this.image = new Image();
         this.image.src = this.getTexture();
         RoomManager.bulletIdCounter++;
@@ -1242,7 +1236,7 @@ class Particle {
         this.y = y + 15 + 23 * Math.sin(this.angle);
     }
 
-    // Get the appropriate texture based on the Particle type
+    
     getTexture() {
         switch (this.type) {
             case "pistol":
@@ -1260,22 +1254,22 @@ class Particle {
             case "glass_chip":
                 return "sprites/particles/glass.png";
             default:
-                return "sprites/particles/metal.png"; // Default texture
+                return "sprites/particles/metal.png"; 
         }
     }
 
-    // Update Particle position
+    
     update() {
         this.x += this.speed * Math.cos(this.angle*0.8+(Math.random()* this.angle*0.4));
         this.y += this.speed * Math.sin(this.angle*0.8+(Math.random()* this.angle*0.4));
-        this.speed *= (0.6+Math.random()*0.4); // Slow down over time
+        this.speed *= (0.6+Math.random()*0.4); 
         this.lifetime--;
         if (this.lifetime <= 0){
             ParticleManager.particles.shift();
         }
     }
 
-    // Draw the Particle
+    
     render(ctx) {
         
         ctx.save();
@@ -1286,9 +1280,9 @@ class Particle {
     }
 }
 class EnemyManager {
-    static enemies = []; // Static array to store all enemies
+    static enemies = []; 
 
-    // Get the enemy class based on the type
+    
     static getEnemyClass(type) {
         switch (type) {
             case 'small':
@@ -1302,21 +1296,21 @@ class EnemyManager {
         }
     }
 
-    // Update all enemies
+    
     static updateAll(deltaTime) {
         for (let enemy of this.enemies) {
             enemy.update(deltaTime);
         }
     }
 
-    // Render all enemies
+    
     static renderAll(ctx) {
         for (let enemy of this.enemies) {
             enemy.render(ctx);
         }
     }
 
-    // Spawn a new enemy
+    
     static spawn(x, y, type = 'small') {
         let enemy;
         switch (type) {
@@ -1336,12 +1330,12 @@ class EnemyManager {
         this.enemies.push(enemy);
     }
 
-    // Spawn a debug enemy (for testing)
+    
     static spawnDebug() {
         this.spawn(300, 300, 'medium');
     }
 
-    // Clear all enemies
+    
     static clear() {
         for (let enemy of this.enemies) {
             enemy.delete();
@@ -1351,60 +1345,60 @@ class EnemyManager {
 }
 class Enemy {
     constructor(x, y, type, health, speed, damage, spriteSource, damagedSpriteSource, attackInterval, colboxWidth, colboxHeight) {
-        this.position = new Vector2(x, y); // Position of the enemy
+        this.position = new Vector2(x, y); 
         this.type = type;
         this.health = health;
         this.speed = speed;
         this.damage = damage;
         this.deleted = false;
         this.enemySprite = new Image();
-        this.isLoaded = false; // Track if the sprite is loaded
-        this.colbox = new Vector2(colboxWidth, colboxHeight); // Collision box size
-        this.angle = 0; // Angle to face the player
+        this.isLoaded = false; 
+        this.colbox = new Vector2(colboxWidth, colboxHeight); 
+        this.angle = 0; 
 
-        // Collision box offsets (adjust these values to align the colbox with the sprite)
-        this.colboxOffsetX = colboxWidth / 4; // Adjust X offset
-        this.colboxOffsetY = colboxHeight / 8; // Adjust Y offset
+        
+        this.colboxOffsetX = colboxWidth / 4; 
+        this.colboxOffsetY = colboxHeight / 8; 
 
-        // Set the image source and wait for it to load
+        
         this.enemySprite.src = spriteSource;
         this.source2 = damagedSpriteSource;
         this.enemySprite.onload = () => {
             this.isLoaded = true;
-            // Set render size based on sprite dimensions
+            
             this.size = new Vector2(this.enemySprite.width, this.enemySprite.height);
         };
         this.enemySprite.onerror = () => {
             console.error(`Failed to load image: ${spriteSource}`);
         };
 
-        // Default size (can be overridden by specific enemies)
-        this.size = new Vector2(50, 50); // Default size for enemies
+        
+        this.size = new Vector2(50, 50); 
 
-        // Attack interval for periodic attacks
+        
         this.attackInterval = setInterval(() => {
             if (Game.state === 'Game') {
-                this.handleAttack(); // Call the handleAttack method
+                this.handleAttack(); 
             }
-        }, 1800 + (Game.player.difficulty - 1) * -500); // Adjust attack interval based on difficulty
+        }, 1800 + (Game.player.difficulty - 1) * -500); 
     }
 
     update() {
-        // Move towards player
+        
         let direction = new Vector2(
-            Game.player.position.x - this.position.x, // Delta X
-            Game.player.position.y - this.position.y  // Delta Y
+            Game.player.position.x - this.position.x, 
+            Game.player.position.y - this.position.y  
         );
         direction.normalize();
         this.position.add(new Vector2(direction.x * this.speed, direction.y * this.speed));
 
-        // Calculate angle to face the player
+        
         this.angle = Math.atan2(
-            Game.player.position.y - this.position.y, // Delta Y
-            Game.player.position.x - this.position.x  // Delta X
+            Game.player.position.y - this.position.y, 
+            Game.player.position.x - this.position.x  
         );
 
-        // Check collisions with bullets
+        
         for (let bullet of BulletManager.bullets) {
             if (Collider.checkCollision(this, bullet) && bullet.type !== "enemy") {
                 this.health--;
@@ -1412,7 +1406,7 @@ class Enemy {
             }
         }
 
-        // Check collisions with props
+        
         for (let prop of PropManager.props) {
             if (Collider.checkCollision(this, prop)) {
                 Collider.resolveCollision(this, prop);
@@ -1422,7 +1416,7 @@ class Enemy {
             this.enemySprite.src = this.source2;
         }
         
-        // Check if enemy is dead
+        
         if (this.health <= 0) {
             this.onDeath();
             this.delete();
@@ -1430,7 +1424,7 @@ class Enemy {
     }
 
     onDeath() {
-        // Handle enemy death (e.g., play death animation, drop items, etc.)
+        
         if (this.type === 'turret') {
             ItemManager.spawn(
                 this.position.x + this.enemySprite.width / 2,
@@ -1444,64 +1438,63 @@ class Enemy {
         if (!this.deleted){
             this.deleted = true;
             clearInterval(this.attackInterval);
-            this.attackInterval = null; // Clear the attack interval
+            this.attackInterval = null; 
             EnemyManager.enemies.splice(EnemyManager.enemies.indexOf(this), 1);
         }
     }
 
     render(ctx) {
         if (!this.isLoaded) {
-            return; // Skip rendering if the sprite is not loaded
+            return; 
         }
 
         ctx.save();
         ctx.imageSmoothingEnabled = false;
-        // Translate to the enemy's position
         ctx.translate(this.position.x + this.size.x / 2, this.position.y + this.size.y / 2);
 
-        // Rotate the canvas to face the player
-        ctx.rotate(this.angle + Math.PI / 2); // Add Math.PI / 2 to align sprite correctly
+        
+        ctx.rotate(this.angle + Math.PI / 2);
 
-        // Draw the enemy sprite centered at its position
+        
         ctx.drawImage(
             this.enemySprite,
-            -this.size.x / 2, // X offset to center the sprite
-            -this.size.y / 2, // Y offset to center the sprite
+            -this.size.x / 2, 
+            -this.size.y / 2, 
             this.size.x,
             this.size.y
         );
 
         ctx.restore();
 
-        // Render the debug collision box
-        //this.renderDebugColbox(ctx);
+        
+        
     }
 
     renderDebugColbox(ctx) {
-        // Calculate the collision box position with offsets
+        
         const colboxX = this.position.x + this.colboxOffsetX;
         const colboxY = this.position.y + this.colboxOffsetY;
 
-        // Set the collision box color and transparency
+        
         ctx.save();
-        ctx.fillStyle = "rgba(255, 0, 0, 0.5)"; // Red color with 50% transparency
-        ctx.strokeStyle = "red"; // Border color
-        ctx.lineWidth = 2; // Border thickness
+        ctx.fillStyle = "rgba(255, 0, 0, 0.5)"; 
+        ctx.strokeStyle = "red"; 
+        ctx.lineWidth = 2; 
 
-        // Draw the collision box
+        
         ctx.fillRect(
-            colboxX, // X position of the collision box
-            colboxY, // Y position of the collision box
-            this.colbox.x, // Width of the collision box
-            this.colbox.y // Height of the collision box
+            colboxX, 
+            colboxY, 
+            this.colbox.x, 
+            this.colbox.y 
         );
 
-        // Draw the border of the collision box
+        
         ctx.strokeRect(
-            colboxX, // X position of the collision box
-            colboxY, // Y position of the collision box
-            this.colbox.x, // Width of the collision box
-            this.colbox.y // Height of the collision box
+            colboxX, 
+            colboxY, 
+            this.colbox.x, 
+            this.colbox.y 
         );
         ctx.restore();
     }
@@ -1519,15 +1512,15 @@ class Enemy {
 class SmallEnemy extends Enemy {
     constructor(x, y) {
         super(
-            x, y, // Position
-            'small', // Type
-            5, // Health
-            1, // Speed
-            10 * Game.player.difficulty, // Damage
-            "sprites/enemy/small.png", // Sprite source
-            "sprites/enemy/small_damaged.png", // Damaged sprite source
-            1800 + (Game.player.difficulty - 1) * -500, // Attack interval
-            28, 28 // Collision box size (width, height)
+            x, y, 
+            'small', 
+            5, 
+            1, 
+            10 * Game.player.difficulty, 
+            "sprites/enemy/small.png", 
+            "sprites/enemy/small_damaged.png", 
+            1800 + (Game.player.difficulty - 1) * -500, 
+            28, 28 
         );
     }
 
@@ -1545,21 +1538,21 @@ class SmallEnemy extends Enemy {
         for (let index = 0; index < count; index++) {
             ParticleManager.spawn(this.position.x + this.size.x/2, this.position.y + this.size.y/2, index, 5, 'metal_chip')
         }
-        // No special behavior on death
+        
     }
 }
 class MediumEnemy extends Enemy {
     constructor(x, y) {
         super(
-            x, y, // Position
-            'medium', // Type
-            12, // Health
-            0.7, // Speed
-            20 * Game.player.difficulty, // Damage
-            "sprites/enemy/medium.png", // Sprite source
-            "sprites/enemy/medium_damaged.png", // Damaged sprite source
-            1800 + (Game.player.difficulty - 1) * -500, // Attack interval
-            56, 56 // Collision box size (width, height)
+            x, y, 
+            'medium', 
+            12, 
+            0.7, 
+            20 * Game.player.difficulty, 
+            "sprites/enemy/medium.png", 
+            "sprites/enemy/medium_damaged.png", 
+            1800 + (Game.player.difficulty - 1) * -500, 
+            56, 56 
         );
     }
 
@@ -1577,21 +1570,21 @@ class MediumEnemy extends Enemy {
         for (let index = 0; index < count; index++) {
             ParticleManager.spawn(this.position.x + this.size.x/2, this.position.y + this.size.y/2, index, 5, 'yellow_metal_chip')
         }
-        // No special behavior on death
+        
     }
 }
 class TurretEnemy extends Enemy {
     constructor(x, y) {
         super(
-            x, y, // Position
-            'turret', // Type
-            10, // Health
-            0, // Speed (turrets don't move)
-            0, // Damage (turrets don't deal melee damage)
-            "sprites/enemy/turret.png", // Sprite source
-            "sprites/enemy/turret_damaged.png", // Damaged sprite source
-            1800 + (Game.player.difficulty - 1) * -500, // Attack interval
-            65, 65 // Collision box size (width, height)
+            x, y, 
+            'turret', 
+            10, 
+            0,
+            0,
+            "sprites/enemy/turret.png", 
+            "sprites/enemy/turret_damaged.png", 
+            1800 + (Game.player.difficulty - 1) * -500, 
+            65, 65 
         );
     }
 
@@ -1650,7 +1643,7 @@ class PropManager {
 
     static spawn(x, y, type, width = 0, height = 0) {
         const propClass = PropManager.getPropClass(type);
-        PropManager.props.push(new propClass(x, y, width, height)); // Add the new prop to the props array
+        PropManager.props.push(new propClass(x, y, width, height)); 
     }
 
     static updateAll() {
@@ -1674,13 +1667,13 @@ class Prop {
         this.position = new Vector2(x, y);
         this.type = type;
         this.propSprite = new Image();
-        this.isLoaded = false; // Track if the image is loaded
+        this.isLoaded = false; 
         this.deleted = false;
-        // Set the image source and wait for it to load
+        
         this.propSprite.src = source;
         this.propSprite.onload = () => {
-            this.isLoaded = true; // Mark the image as loaded
-            // Set size based on sprite dimensions (if not explicitly provided)
+            this.isLoaded = true; 
+            
             if (!width || !height) {
                 this.size = new Vector2(this.propSprite.width, this.propSprite.height);
             }
@@ -1689,17 +1682,17 @@ class Prop {
             console.error(`Failed to load image: ${source}`);
         };
 
-        // Set size based on provided width and height (if provided)
+        
         this.size = new Vector2(width, height);
     }
 
     update() {
-        // Check collision with player
+        
         if (Collider.checkCollision(this, Game.player)) {
             this.handlePlayerCollision();
         }
 
-        // Check collision with bullets
+        
         for (let bullet of BulletManager.bullets) {
             if (Collider.checkCollision(this, bullet)) {
                 this.onHit(bullet);
@@ -1708,17 +1701,17 @@ class Prop {
     }
 
     handlePlayerCollision() {
-        // Default behavior: block player movement
+        
         Collider.resolveCollision(Game.player, this);
     }
 
     onHit(bullet) {
-        // Default: Do nothing
+        
     }
 
     render(ctx) {
         if (!this.isLoaded) {
-            return; // Skip rendering if the image is not loaded
+            return; 
         }
 
         ctx.save();
@@ -1750,7 +1743,7 @@ class BoxWooden extends Prop {
 
     onHit(bullet) {
         if(!this.deleted){
-        // Spawn a random item when hit
+        
         let count = Math.ceil(Math.random()*10);
         for (let index = 0; index < count; index++) {
             ParticleManager.spawn(this.position.x + this.size.x/2, this.position.y + this.size.y/2, index, 5, 'wooden_chip')
@@ -2050,24 +2043,24 @@ class RoomManager {
         };
 
 static initRoom() {
-    PropManager.spawn(0, 65, "wall", 600, 30); //крышечка верх!
-    PropManager.spawn(-60, 123, "wall", 30, 475);//крышечка лево!
-    PropManager.spawn(630, 123, "wall", 30, 475);//крышечка право!
-    PropManager.spawn(0, 630, "wall", 600, 30); ///крышечка низ!
-    PropManager.spawn(0, 93, "wall", 258, 80);//стенка1 верх!
-    PropManager.spawn(340, 93, "wall", 258, 80);//стенка2 верх!
-    PropManager.spawn(0, 552, "wall", 258, 80);//стенка1 низ
-    PropManager.spawn(340, 552, "wall", 258, 80);//стенка2 низ
-    PropManager.spawn(-38, 173, "wall", 80, 140);//стенка1 лево
-    PropManager.spawn(-38, 409, "wall", 80, 143);//стенка2 лево
-    PropManager.spawn(558, 173, "wall", 80, 140);//стенка1 право
-    PropManager.spawn(558, 409, "wall", 80, 143);//стенка2 право
+    PropManager.spawn(0, 65, "wall", 600, 30); 
+    PropManager.spawn(-60, 123, "wall", 30, 475);
+    PropManager.spawn(630, 123, "wall", 30, 475);
+    PropManager.spawn(0, 630, "wall", 600, 30);
+    PropManager.spawn(0, 93, "wall", 258, 80);
+    PropManager.spawn(340, 93, "wall", 258, 80);
+    PropManager.spawn(0, 552, "wall", 258, 80);
+    PropManager.spawn(340, 552, "wall", 258, 80);
+    PropManager.spawn(-38, 173, "wall", 80, 140);
+    PropManager.spawn(-38, 409, "wall", 80, 143);
+    PropManager.spawn(558, 173, "wall", 80, 140);
+    PropManager.spawn(558, 409, "wall", 80, 143);
 }
 static clearRoom(){
     for (let enemy of EnemyManager.enemies) {
         if (enemy.attackInterval) {
-            clearInterval(enemy.attackInterval); // Clear the interval
-            enemy.attackInterval = null; // Optional: Set it to null to indicate it's cleared
+            clearInterval(enemy.attackInterval); 
+            enemy.attackInterval = null;
         }
     }
     ParticleManager.clear()
@@ -2085,7 +2078,7 @@ static loadNewRoom() {
     Game.player.difficulty = Game.player.difficulty + 0.03;
 
 
-// Определяем все двери
+
     let doors = [
         { side: 'left', x: -4, y: 313, closedType: "doorLocked", openType: "doorOpen", width: 12, height: 96 },
         { side: 'right', x: 590, y: 314, closedType: "doorLocked", openType: "doorOpen", width: 12, height: 100 },
@@ -2093,35 +2086,35 @@ static loadNewRoom() {
         { side: 'bottom', x: 257, y: 588, closedType: "doorLockedH", openType: "doorOpenH", width: 86, height: 12 }
     ];
     let cameFrom = "bottom";
-        // Определяем, откуда пришел игрок
+        
     if (Game.player.position.y > 500) {
-        cameFrom = 'top'; // Игрок пришел сверху
+        cameFrom = 'top'; 
         Game.player.position.y = 150;
     } else if (Game.player.position.y < 230) {
-        cameFrom = 'bottom'; // Игрок пришел снизу
+        cameFrom = 'bottom'; 
         Game.player.position.y = 550;
     } else if (Game.player.position.x < 50) {
-        cameFrom = 'right'; // Игрок пришел справа
+        cameFrom = 'right'; 
         Game.player.position.x = 550;
     } else {
-        cameFrom = 'left'; // Игрок пришел слева
+        cameFrom = 'left'; 
         Game.player.position.x = 10;
     }
-// Функция для создания комнаты
-    // 1. Закрываем дверь, откуда пришел игрок
+
+    
     let closedDoor = doors.find(door => door.side === cameFrom);
     PropManager.spawn(closedDoor.x, closedDoor.y, closedDoor.closedType, closedDoor.width, closedDoor.height)
-    // 2. Оставшиеся три двери
+    
     let remainingDoors = doors.filter(door => door.side !== cameFrom);
 
-    // 3. Случайное количество открытых дверей (от 1 до 3)
-    let numberOfOpenDoors = Math.floor(Math.random() * 3) + 1; // Случайное число от 1 до 3
+    
+    let numberOfOpenDoors = Math.floor(Math.random() * 3) + 1; 
 
-    // 4. Случайным образом выбираем, какие двери будут открыты
-    let shuffledDoors = remainingDoors.sort(() => Math.random() - 0.5); // Перемешиваем массив
+    
+    let shuffledDoors = remainingDoors.sort(() => Math.random() - 0.5); 
     for (let i = 0; i < shuffledDoors.length; i++) {
         let door = shuffledDoors[i];
-        let doorType = i < numberOfOpenDoors ? door.openType : door.closedType; // Открываем первые `numberOfOpenDoors` дверей
+        let doorType = i < numberOfOpenDoors ? door.openType : door.closedType; 
         PropManager.spawn(door.x, door.y, doorType, door.width, door.height);
     }
 
@@ -2144,7 +2137,7 @@ static getSaveData() {
 }
 
 static loadSaveData(data) {
-    // Clear existing intervals for all enemies
+    
     for (let enemy of EnemyManager.enemies) {
         if (enemy.attackInterval) {
             clearInterval(enemy.attackInterval);
@@ -2152,28 +2145,28 @@ static loadSaveData(data) {
         }
     }
 
-    // Clear all existing enemies
+    
     EnemyManager.enemies = [];
 
-    // Load room counter
+    
     this.roomCounter = data.roomCounter;
 
-    // Reconstruct bullets
+    
     BulletManager.bullets = data.bullets ? data.bullets.map(bulletData => new Bullet(bulletData.x, bulletData.y, bulletData.angle, bulletData.speed, bulletData.type)) : [];
 
-    // Reconstruct props
+    
     PropManager.props = data.roomCurrProps ? data.roomCurrProps.map(propData => {
         const propClass = PropManager.getPropClass(propData.type);
         return new propClass(propData.x, propData.y, propData.width, propData.height);
     }) : [];
 
-    // Reconstruct items
+    
     ItemManager.items = data.roomCurrItems ? data.roomCurrItems.map(itemData => {
         const itemClass = ItemManager.getItemClass(itemData.type);
         return new itemClass(itemData.x, itemData.y);
     }) : [];
 
-    // Reconstruct enemies
+    
     EnemyManager.enemies = data.roomCurrEnemies ? data.roomCurrEnemies.map(enemyData => {
         const enemyClass = EnemyManager.getEnemyClass(enemyData.type);
         return new enemyClass(enemyData.x, enemyData.y);
@@ -2194,18 +2187,18 @@ class Player {
         };
         this.sprite = "sprites/player/pistol_idle.png";
         this.plComponent = new PlayerComponent(61, 70, 285, 10);
-        this.position = new Vector2(this.plComponent.x, this.plComponent.y); // Starting position
-        this.velocity = new Vector2(0, 0); // Velocity vector
-        this.moveSpeed = 2; // Movement speed
-        this.size = new Vector2(30, 30); // Player's size (width, height)
-        this.currentWeapon = this.weapons.pistol; // Default weapon is pistol
-        this.meleeAttack = new MeleeAttack(this); // Add melee attack
+        this.position = new Vector2(this.plComponent.x, this.plComponent.y); 
+        this.velocity = new Vector2(0, 0); 
+        this.moveSpeed = 2; 
+        this.size = new Vector2(30, 30);
+        this.currentWeapon = this.weapons.pistol; 
+        this.meleeAttack = new MeleeAttack(this); 
 
-        // Collision box offsets (adjust these values to align the colbox with the sprite)
-        this.colboxOffsetX = -15; // Adjust X offset
-        this.colboxOffsetY = -15; // Adjust Y offset
+        
+        this.colboxOffsetX = -15; 
+        this.colboxOffsetY = -15; 
 
-        // Movement flags
+        
         this.moveUp = false;
         this.moveDown = false;
         this.moveLeft = false;
@@ -2213,26 +2206,26 @@ class Player {
     }
 
     move(direction) {
-        // Accumulate movement inputs
+        
         if (direction.x !== 0) this.velocity.x = direction.x;
         if (direction.y !== 0) this.velocity.y = direction.y;
     }
 
     updateMovement() {
-        // Reset velocity
+        
         this.velocity.x = 0;
         this.velocity.y = 0;
 
-        // Accumulate movement based on flags
+        
         if (this.moveUp) this.velocity.y -= 1;
         if (this.moveDown) this.velocity.y += 1;
         if (this.moveLeft) this.velocity.x -= 1;
         if (this.moveRight) this.velocity.x += 1;
 
-        // Normalize the velocity to ensure consistent speed in all directions
+        
         if (this.velocity.x !== 0 || this.velocity.y !== 0) {
             this.velocity.normalize();
-            this.velocity.multiply(this.moveSpeed); // Apply moveSpeed
+            this.velocity.multiply(this.moveSpeed); 
         }
     }
 
@@ -2245,9 +2238,9 @@ class Player {
 
     shoot() {
         if (this.currentWeapon instanceof Rifle) {
-            this.currentWeapon.startShooting(); // Start automatic shooting
+            this.currentWeapon.startShooting(); 
         } else {
-            this.currentWeapon.shoot(); // Single shot for other weapons
+            this.currentWeapon.shoot(); 
         }
     }
 
@@ -2260,14 +2253,14 @@ class Player {
     startAiming() {
         if (this.isReloading === false) {
             this.aims = true;
-            this.moveSpeed = 0.8; // Reduce speed when aiming
+            this.moveSpeed = 0.8; 
         }
     }
 
     stopAiming() {
         if (this.isReloading === false) {
             this.aims = false;
-            this.moveSpeed = 2; // Restore normal speed
+            this.moveSpeed = 2; 
         }
     }
 
@@ -2318,23 +2311,23 @@ class Player {
             Game.shutdown();
         }
 
-        // Update movement based on input flags
+        
         this.updateMovement();
 
-        // Update position with velocity
+        
         this.position.add(this.velocity);
 
-        // Update player component position
+        
         this.plComponent.x = this.position.x;
         this.plComponent.y = this.position.y;
 
-        // Update melee attack
+        
         this.meleeAttack.update();
 
-        // Update player component
+        
         this.plComponent.update();
 
-        // Check collisions with bullets
+        
         for (let bullet of BulletManager.bullets) {
             if (Collider.checkCollision(this, bullet) && bullet.type !== "player") {
                 let dmg = Math.ceil(Math.random() * 15 + 10 * (Game.player.difficulty - 1));
@@ -2348,7 +2341,7 @@ class Player {
 
     render(ctx) {
         this.plComponent.render(ctx);
-        this.meleeAttack.render(ctx); // Render the melee attack
+        this.meleeAttack.render(ctx); 
     }
 
     getSaveData() {
@@ -2375,25 +2368,25 @@ class Player {
         this.health = data.health;
         this.maxHealth = data.maxHealth;
     
-        // Reconstruct weapons
+        
         this.weapons.pistol = new Pistol();
         this.weapons.shotgun = new Shotgun();
         this.weapons.rifle = new Rifle();
     
-        // Load weapon states
+        
         Object.assign(this.weapons.pistol, data.weapons.pistol);
         Object.assign(this.weapons.shotgun, data.weapons.shotgun);
         Object.assign(this.weapons.rifle, data.weapons.rifle);
     
-        // Set current weapon
+        
         this.currentWeapon = this.weapons[data.currentWeapon];
     
-        // Load position
-        this.position = new Vector2(data.position.x, data.position.y); // Reconstruct the position Vector2
-        this.plComponent.x = this.position.x; // Update the player component's position
+        
+        this.position = new Vector2(data.position.x, data.position.y); 
+        this.plComponent.x = this.position.x;
         this.plComponent.y = this.position.y;
     
-        // Load other data
+        
         this.difficulty = data.difficulty;
         Game.score = data.score;
         Game.roomCounter = data.roomCounter;
@@ -2405,30 +2398,30 @@ class Menu {
             this.backgroundSprite = new Image();
             this.backgroundSprite.src = backgroundSprite;
         } else {
-            this.backgroundSprite = null; // Если картинка не передана, фон не рисуется
+            this.backgroundSprite = null; 
         }
     }
 
-    // Render the menu background (если есть картинка)
+    
     render(ctx) {
         if (this.backgroundSprite) {
             ctx.drawImage(this.backgroundSprite, 0, 0, GameField.canvas.width, GameField.canvas.height);
         }
     }
 
-    // Handle user input (to be overridden by subclasses)
+    
     handleInput(event) {}
 }
 class MainMenu extends Menu {
     constructor() {
-        super("sprites/ui/main_menu_bg.png"); // Path to the background sprite
+        super("sprites/ui/main_menu_bg.png"); 
         this.buttons = [">Начать игру", "Загрузить игру", "Настройки", "Управление"];
-        this.button = 0; // Currently selected button
+        this.button = 0; 
     }
 
     render(ctx = GameField.context) {
-        super.render(ctx); // Render the background
-        // Render buttons
+        super.render(ctx); 
+        
 
         ctx.fillStyle = "#FFFFFF";
         ctx.font = "20pt PixelCode"
@@ -2442,7 +2435,7 @@ class MainMenu extends Menu {
     handleInput(event) {
         if (event.type === "keydown") {
             switch (event.keyCode) {
-                case 38: // Arrow Up
+                case 38: 
                     this.button = (this.button - 1 + this.buttons.length) % this.buttons.length;
                     for (let i = 0; i < this.buttons.length; i++) {
                         this.buttons[i] = this.buttons[i].replace(/^>/, '');
@@ -2450,7 +2443,7 @@ class MainMenu extends Menu {
                     this.buttons[this.button] = '>' + this.buttons[this.button];
                     SoundEvents.playSound("pistol_shoot");
                     break;
-                case 40: // Arrow Down
+                case 40: 
                     this.button = (this.button + 1) % this.buttons.length;
                     for (let i = 0; i < this.buttons.length; i++) {
                         this.buttons[i] = this.buttons[i].replace(/^>/, '');
@@ -2458,11 +2451,11 @@ class MainMenu extends Menu {
                     this.buttons[this.button] = '>' + this.buttons[this.button];
                     SoundEvents.playSound("pistol_shoot");
                     break;
-                case 13: // Enter
+                case 13: 
                     this.handleButtonSelect();
                     break;
-                case 27: // Escape
-                    // Close the game or return to the previous menu
+                case 27: 
+                    
                     break;
             }
         }
@@ -2473,17 +2466,17 @@ class MainMenu extends Menu {
             case 0:
                 Game.state = 'Game';
                 Game.restart();
-                Game.menuManager.popMenu(); // Close the main menu
+                Game.menuManager.popMenu(); 
                 break;
-            case 1: // Start
+            case 1: 
                 SoundEvents.playSound("pistol_shoot");
                 Game.loadGame();
                 break;
-            case 2: // Options
+            case 2: 
                 SoundEvents.playSound("shotgun_pump");
                 Game.menuManager.pushMenu(new OptionsMenu());
                 break;
-            case 3: // Controls Guide
+            case 3: 
                 SoundEvents.playSound("shotgun_pump");
                 Game.menuManager.pushMenu(new ControlsMenu());
                 break;
@@ -2492,17 +2485,17 @@ class MainMenu extends Menu {
 }
 class OptionsMenu extends Menu {
     constructor() {
-        super("sprites/ui/options_menu.png"); // Path to the background sprite
+        super("sprites/ui/options_menu.png"); 
         this.options = ["Музыка:", "Сложность:"];
         this.difficulties = ["Легкая", "Средняя", "Сложная"];
         this.musicStates = ["Включена", "Выключена"];
-        this.optionRow = 0; // Currently selected option row
-        this.difficultyIndex = 1; // Default difficulty (Средняя)
-        this.musicIndex = 0; // Default music state (Включена)
+        this.optionRow = 0; 
+        this.difficultyIndex = 1; 
+        this.musicIndex = 0; 
     }
 
     render(ctx = GameField.context) {
-        super.render(ctx); // Render the background
+        super.render(ctx); 
         ctx.fillStyle = "#FFFFFF";
         ctx.font = "20pt PixelCode";
 
@@ -2524,7 +2517,7 @@ class OptionsMenu extends Menu {
             }).join(' ');
         ctx.fillText(`${difficultyText}`, 100, 540);
 
-        // Render music state options
+        
         let musicText = this.musicStates.join(' ');
             musicText = this.musicStates.map((state, index) => {
                 if (index === this.musicIndex) {
@@ -2540,15 +2533,15 @@ class OptionsMenu extends Menu {
         if (event.type === "keydown") {
             Game.chosenDifficulty = this.difficultyIndex + 1;
             switch (event.keyCode) {
-                case 38: // Arrow Up
+                case 38: 
                     this.optionRow = (this.optionRow - 1 + this.options.length) % this.options.length;
                     SoundEvents.playSound("pistol_shoot");
                     break;
-                case 40: // Arrow Down
+                case 40: 
                     this.optionRow = (this.optionRow + 1) % this.options.length;
                     SoundEvents.playSound("pistol_shoot");
                     break;
-                case 37: // Arrow Left
+                case 37: 
                     if (this.optionRow === 0) {
                         this.musicIndex = (this.musicIndex - 1 + this.musicStates.length) % this.musicStates.length;
                         if (this.musicIndex === 1) SoundEvents.musicEnabled = false;
@@ -2558,7 +2551,7 @@ class OptionsMenu extends Menu {
                     }
                     SoundEvents.playSound("pistol_shoot");
                     break;
-                case 39: // Arrow Right
+                case 39: 
                     if (this.optionRow === 0) {
                         this.musicIndex = (this.musicIndex + 1) % this.musicStates.length;
                         if (this.musicIndex === 1) SoundEvents.musicEnabled = false;
@@ -2568,9 +2561,9 @@ class OptionsMenu extends Menu {
                     }
                     SoundEvents.playSound("pistol_shoot");
                     break;
-                case 27: // Escape
+                case 27: 
                     SoundEvents.playSound("pistol_shoot");
-                    Game.menuManager.popMenu(); // Return to the previous menu
+                    Game.menuManager.popMenu(); 
                     break;
             }
         }
@@ -2600,20 +2593,20 @@ class InputMenu extends Menu {
 }
 class ControlsMenu extends Menu {
     constructor() {
-        super("sprites/ui/controls_menu.png"); // Path to the fullscreen controls menu sprite
+        super("sprites/ui/controls_menu.png"); 
     }
 
-    // Handle user input
+    
     handleInput(event) {
-        if (event.type === "keydown" && event.keyCode === 27) { // 27 is the keyCode for Esc
-            Game.menuManager.popMenu(); // Close the controls menu
-            SoundEvents.playSound("pistol_shoot"); // Optional: Play a sound effect
+        if (event.type === "keydown" && event.keyCode === 27) { 
+            Game.menuManager.popMenu(); 
+            SoundEvents.playSound("pistol_shoot"); 
         }
     }
 
-    // Render the controls menu
+    
     render(ctx = GameField.context) {
-        super.render(ctx); // Render the fullscreen background sprite
+        super.render(ctx); 
     }
 }
 class PauseMenu extends Menu {
@@ -2624,23 +2617,23 @@ class PauseMenu extends Menu {
     }
 
     render(ctx) {
-        // Очистка холста и установка полупрозрачного черного фона
-        ctx.save(); // Сохраняем текущее состояние контекста
+        
+        ctx.save(); 
         super.render(ctx);
-        ctx.fillStyle = "#000000"; // Черный цвет
-        ctx.fillRect(0, 0, GameField.width, GameField.height); // Заливаем весь экран
-        ctx.restore(); // Восстанавливаем состояние контекста (убираем прозрачность)
+        ctx.fillStyle = "#000000"; 
+        ctx.fillRect(0, 0, GameField.width, GameField.height); 
+        ctx.restore(); 
 
-        // Текст "Пауза"
-        ctx.fillStyle = "#FFFFFF"; // Белый цвет текста
+        "Пауза"
+        ctx.fillStyle = "#FFFFFF"; 
         ctx.font = "20pt PixelCode";
         ctx.fillText("Пауза", 40, 100);
 
-        // Отображение опций
+        
         for (let i = 0; i < this.options.length; i++) {
             let optionText = this.options[i];
             if (i === this.selectedOption) {
-                optionText = '>' + optionText; // Добавляем указатель выбора
+                optionText = '>' + optionText; 
             }
             ctx.fillText(optionText, 40, 200 + i * 40);
         }
@@ -2649,23 +2642,23 @@ class PauseMenu extends Menu {
     handleInput(event) {
         if (event.type === "keydown") {
             switch (event.keyCode) {
-                case 38: // Стрелка вверх
+                case 38: 
                     this.selectedOption = (this.selectedOption - 1 + this.options.length) % this.options.length;
                     SoundEvents.playSound("pistol_shoot");
                     break;
 
-                case 40: // Стрелка вниз
+                case 40: 
                     this.selectedOption = (this.selectedOption + 1) % this.options.length;
                     SoundEvents.playSound("pistol_shoot");
                     break;
 
-                case 13: // Enter
+                case 13: 
                     SoundEvents.playSound("pistol_shoot");
                     this.handleOptionSelect();
                     break;
 
-                case 27: // Escape (теперь используется для выбора "Продолжить")
-                    this.selectedOption = 0; // Выбираем первую опцию ("Продолжить")
+                case 27:
+                    this.selectedOption = 0;
                     this.handleOptionSelect();
                     break;
             }
@@ -2674,20 +2667,20 @@ class PauseMenu extends Menu {
 
     handleOptionSelect() {
         switch (this.selectedOption) {
-            case 0: // Продолжить
+            case 0: 
                 Game.state = 'Game';
-                Game.menuManager.popMenu(); // Закрыть меню паузы и продолжить игру
+                Game.menuManager.popMenu(); 
                 break;
 
-            case 1: // Сохранить
+            case 1: 
                 Game.saveGame();
                 break;
 
-            case 2: // Загрузить
+            case 2: 
                 Game.loadGame();
                 break;
 
-            case 3: // В главное меню
+            case 3: 
                 Game.menuManager.loadMainMenu();
                 break;
         }
@@ -2701,24 +2694,24 @@ class GameOverMenu extends Menu {
     }
 
     render(ctx) {
-        // Очистка холста и установка полупрозрачного черного фона
-        ctx.save(); // Сохраняем текущее состояние контекста
+        
+        ctx.save(); 
         super.render(ctx);
-        ctx.fillStyle = "#000000"; // Черный цвет
-        ctx.fillRect(0, 0, GameField.width, GameField.height); // Заливаем весь экран
-        ctx.restore(); // Восстанавливаем состояние контекста (убираем прозрачность)
+        ctx.fillStyle = "#000000"; 
+        ctx.fillRect(0, 0, GameField.width, GameField.height); 
+        ctx.restore(); 
 
-        // Текст "Пауза"
-        ctx.fillStyle = "#FFFFFF"; // Белый цвет текста
+        "Пауза"
+        ctx.fillStyle = "#FFFFFF"; 
         ctx.font = "20pt PixelCode";
         ctx.fillText(`Вы проиграли!`, 40, 100);
         ctx.fillText(`Результат: ${Game.score} очков.`, 40, 140);
 
-        // Отображение опций
+        
         for (let i = 0; i < this.options.length; i++) {
             let optionText = this.options[i];
             if (i === this.selectedOption) {
-                optionText = '>' + optionText; // Добавляем указатель выбора
+                optionText = '>' + optionText; 
             }
             ctx.fillText(optionText, 40, 250 + i * 40);
         }
@@ -2727,23 +2720,23 @@ class GameOverMenu extends Menu {
     handleInput(event) {
         if (event.type === "keydown") {
             switch (event.keyCode) {
-                case 38: // Стрелка вверх
+                case 38: 
                     this.selectedOption = (this.selectedOption - 1 + this.options.length) % this.options.length;
                     SoundEvents.playSound("pistol_shoot");
                     break;
 
-                case 40: // Стрелка вниз
+                case 40: 
                     this.selectedOption = (this.selectedOption + 1) % this.options.length;
                     SoundEvents.playSound("pistol_shoot");
                     break;
 
-                case 13: // Enter
+                case 13: 
                     SoundEvents.playSound("pistol_shoot");
                     this.handleOptionSelect();
                     break;
 
-                case 27: // Escape (теперь используется для выбора "Продолжить")
-                    this.selectedOption = 3; // Выбираем первую опцию ("Продолжить")
+                case 27:
+                    this.selectedOption = 3;
                     this.handleOptionSelect();
                     break;
             }
@@ -2752,13 +2745,13 @@ class GameOverMenu extends Menu {
 
     handleOptionSelect() {
         switch (this.selectedOption) {
-            case 0: // Продолжить
+            case 0: 
                 Game.restart();
                 Game.state = 'Game';
-                Game.menuManager.popMenu(); // Закрыть меню паузы и продолжить игру
+                Game.menuManager.popMenu(); 
                 break;
 
-            case 1: // В главное меню
+            case 1: 
                 Game.menuManager.loadMainMenu();
                 break;
         }
@@ -2766,7 +2759,7 @@ class GameOverMenu extends Menu {
 }
 class MenuManager {
     constructor() {
-        this.menus = []; // Stack of active menus
+        this.menus = []; 
     }
 
     pushMenu(menu) {
@@ -2803,12 +2796,12 @@ class Game {
     static mousePosY;  
     static roomCounter = 0;
     static inputRegistered = false;
-    static player = null; // Экземпляр игрока
-    static floor = null; // Текущая комната
-    static score = -100; // Счет игрока
+    static player = null; 
+    static floor = null; 
+    static score = -100; 
     static state = 'Menu';
-    static chosenDifficulty = 2; //gameOption
-    // Инициализация игры
+    static chosenDifficulty = 2; 
+    
     static start() {
         ImagePreloader.init();
         if (localStorage.getItem('highscore') === undefined) {
@@ -2879,8 +2872,8 @@ class Game {
     static restart() {
         for (let enemy of EnemyManager.enemies) {
             if (enemy.attackInterval) {
-                clearInterval(enemy.attackInterval); // Clear the interval
-                enemy.attackInterval = null; // Optional: Set it to null to indicate it's cleared
+                clearInterval(enemy.attackInterval); 
+                enemy.attackInterval = null;
             }
         }
         Game.state = 'Game'
@@ -2936,7 +2929,7 @@ class GameField {
         let h1Element = document.querySelector(".title");
         h1Element.insertAdjacentElement("beforebegin", this.canvas);
 
-        // Загрузка шрифта
+        
         let myFont = new FontFace('PixelCode', 'url(fonts/PixelCode-Thin.otf)');
         myFont.load().then((font) => {
             document.fonts.add(font);
@@ -3040,17 +3033,17 @@ class GameField {
         } else if (Game.state === 'Pause'){
             Game.state = 'Game';
             console.log("Game resumed");
-            Game.menuManager.popMenu(); // Close the pause menu
+            Game.menuManager.popMenu(); 
         }
     }
 }
 class ImagePreloader {
-    //my hand was forced to do that for Itch.io to properly load all of the sprites beforehand and not during gameplay. I am very sorry for the code below
+    
     static images = {};
     static totalAssets = 0;
     static loadedAssets = 0;
 
-    // Add an image to the preloader
+    
     static addImage(key, src) {
         this.totalAssets++;
         const img = new Image();
@@ -3071,10 +3064,10 @@ class ImagePreloader {
         return this.loadedAssets === this.totalAssets;
     }
 
-    // Initialize the preloader and load all assets
+    
     static init() {
 
-        // Load all sprites
+        
         this.addImage("player_pistol_idle", "sprites/player/pistol_idle.png");
         this.addImage("player_pistol_aim", "sprites/player/pistol_aim.png");
         this.addImage("player_shotgun_idle", "sprites/player/shotgun_idle.png");
@@ -3084,7 +3077,7 @@ class ImagePreloader {
         this.addImage("player_rifle_aim", "sprites/player/rifle_aim.png");
         this.addImage("player_swing", "sprites/player/swing.png");
 
-        // Load enemy sprites
+        
         this.addImage("enemy_small", "sprites/enemy/small.png");
         this.addImage("enemy_small_damaged", "sprites/enemy/small_damaged.png");
         this.addImage("enemy_medium", "sprites/enemy/medium.png");
@@ -3092,7 +3085,7 @@ class ImagePreloader {
         this.addImage("enemy_turret", "sprites/enemy/turret.png");
         this.addImage("enemy_turret_damaged", "sprites/enemy/turret_damaged.png");
 
-        // Load environment sprites
+        
         this.addImage("floor", "sprites/enviroment/floor.png");
         this.addImage("box_wooden", "sprites/enviroment/box_wooden.png");
         this.addImage("box", "sprites/enviroment/box.png");
@@ -3110,7 +3103,7 @@ class ImagePreloader {
         this.addImage("door_unlocked_horisontal", "sprites/enviroment/door_unlocked_horisontal.png");
         this.addImage("colbox", "sprites/enviroment/colbox.png");
 
-        // Load item sprites
+        
         this.addImage("medkit", "sprites/enviroment/medkit.png");
         this.addImage("sodacan", "sprites/enviroment/sodacan.png");
         this.addImage("ammobag", "sprites/enviroment/ammobag.png");
@@ -3118,7 +3111,7 @@ class ImagePreloader {
         this.addImage("shotgun", "sprites/enviroment/shotgun.png");
         this.addImage("rifle", "sprites/enviroment/rifle.png");
 
-        // Load particle sprites
+        
         this.addImage("shell_pistol", "sprites/particles/shell_pistol.png");
         this.addImage("shell_rifle", "sprites/particles/shell_rifle.png");
         this.addImage("shell_shotgun", "sprites/particles/shell_shotgun.png");
@@ -3127,7 +3120,7 @@ class ImagePreloader {
         this.addImage("wood", "sprites/particles/wood.png");
         this.addImage("glass", "sprites/particles/glass.png");
 
-        // Load UI sprites
+        
         this.addImage("main_menu_bg", "sprites/ui/main_menu_bg.png");
         this.addImage("options_menu", "sprites/ui/options_menu.png");
         this.addImage("controls_menu", "sprites/ui/controls_menu.png");
