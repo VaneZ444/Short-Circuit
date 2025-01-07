@@ -1411,7 +1411,7 @@ class Enemy {
                 Collider.resolveCollision(this, prop);
             }
         }
-        if (this.health <= 2) {
+        if (this.health <= 1) {
             this.enemySprite.src = this.source2;
         }
         
