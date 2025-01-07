@@ -1368,6 +1368,7 @@ class Enemy {
 
         // Set the image source and wait for it to load
         this.enemySprite.src = spriteSource;
+        this.source2 = damagedSpriteSource;
         this.enemySprite.onload = () => {
             this.isLoaded = true;
             // Set render size based on sprite dimensions
@@ -1417,7 +1418,10 @@ class Enemy {
                 Collider.resolveCollision(this, prop);
             }
         }
-
+        if (this.health <= 2) {
+            this.enemySprite.src = this.source2;
+        }
+        
         // Check if enemy is dead
         if (this.health <= 0) {
             this.onDeath();
@@ -2103,7 +2107,6 @@ static loadNewRoom() {
         cameFrom = 'left'; // Игрок пришел слева
         Game.player.position.x = 10;
     }
-    console.log(cameFrom)
 // Функция для создания комнаты
     // 1. Закрываем дверь, откуда пришел игрок
     let closedDoor = doors.find(door => door.side === cameFrom);
@@ -2236,9 +2239,7 @@ class Player {
     switchWeapon(weaponName) {
         if (this.weapons[weaponName] && this.weapons[weaponName].isUnlocked && !this.isReloading) {
             this.currentWeapon = this.weapons[weaponName];
-            console.log(`Switched to ${weaponName}.`);
         } else {
-            console.log(`${weaponName} is not available.`);
         }
     }
 
@@ -2278,7 +2279,6 @@ class Player {
         if (this.currentWeapon instanceof Shotgun) {
             this.currentWeapon.pump();
         } else {
-            console.log("Pumping is only available for the shotgun.");
         }
     }
 
@@ -2583,7 +2583,7 @@ class InputMenu extends Menu {
 
     handleInput(event) {
         if (event.type === "keydown" && event.keyCode === 13){
-                console.log('input reg')
+                console.log('Input registered!')
                 SoundEvents.playSound('pistol_shoot');
                 this.handleButtonSelect();
             }
@@ -2810,6 +2810,7 @@ class Game {
     static chosenDifficulty = 2; //gameOption
     // Инициализация игры
     static start() {
+        ImagePreloader.init();
         if (localStorage.getItem('highscore') === undefined) {
             localStorage.setItem('highscore', 0);
         }
@@ -2939,7 +2940,7 @@ class GameField {
         let myFont = new FontFace('PixelCode', 'url(fonts/PixelCode-Thin.otf)');
         myFont.load().then((font) => {
             document.fonts.add(font);
-            console.log('Font loaded');
+            console.log('Font loaded!');
         });
 
         this.startGameLoop();
@@ -3041,5 +3042,106 @@ class GameField {
             console.log("Game resumed");
             Game.menuManager.popMenu(); // Close the pause menu
         }
+    }
+}
+class ImagePreloader {
+    //my hand was forced to do that for Itch.io to properly load all of the sprites beforehand and not during gameplay. I am very sorry for the code below
+    static images = {};
+    static totalAssets = 0;
+    static loadedAssets = 0;
+
+    // Add an image to the preloader
+    static addImage(key, src) {
+        this.totalAssets++;
+        const img = new Image();
+        img.src = src;
+        img.onload = () => {
+            this.loadedAssets++;
+            this.images[key] = img;
+            if (this.isDone()) {
+                console.log("All assets loaded!");
+            }
+        };
+        img.onerror = () => {
+            console.error(`Failed to load image: ${src}`);
+        };
+    }
+
+    static isDone() {
+        return this.loadedAssets === this.totalAssets;
+    }
+
+    // Initialize the preloader and load all assets
+    static init() {
+
+        // Load all sprites
+        this.addImage("player_pistol_idle", "sprites/player/pistol_idle.png");
+        this.addImage("player_pistol_aim", "sprites/player/pistol_aim.png");
+        this.addImage("player_shotgun_idle", "sprites/player/shotgun_idle.png");
+        this.addImage("player_shotgun_aim", "sprites/player/shotgun_aim.png");
+        this.addImage("player_shotgun_pump", "sprites/player/shotgun_pump.png");
+        this.addImage("player_rifle_idle", "sprites/player/rifle_idle.png");
+        this.addImage("player_rifle_aim", "sprites/player/rifle_aim.png");
+        this.addImage("player_swing", "sprites/player/swing.png");
+
+        // Load enemy sprites
+        this.addImage("enemy_small", "sprites/enemy/small.png");
+        this.addImage("enemy_small_damaged", "sprites/enemy/small_damaged.png");
+        this.addImage("enemy_medium", "sprites/enemy/medium.png");
+        this.addImage("enemy_medium_damaged", "sprites/enemy/medium_damaged.png");
+        this.addImage("enemy_turret", "sprites/enemy/turret.png");
+        this.addImage("enemy_turret_damaged", "sprites/enemy/turret_damaged.png");
+
+        // Load environment sprites
+        this.addImage("floor", "sprites/enviroment/floor.png");
+        this.addImage("box_wooden", "sprites/enviroment/box_wooden.png");
+        this.addImage("box", "sprites/enviroment/box.png");
+        this.addImage("chair1", "sprites/enviroment/chair1.png");
+        this.addImage("chair2", "sprites/enviroment/chair2.png");
+        this.addImage("cupboard", "sprites/enviroment/cupboard.png");
+        this.addImage("computers", "sprites/enviroment/computers.png");
+        this.addImage("soda", "sprites/enviroment/soda.png");
+        this.addImage("soda_broken", "sprites/enviroment/soda_broken.png");
+        this.addImage("table1", "sprites/enviroment/table1.png");
+        this.addImage("table2", "sprites/enviroment/table2.png");
+        this.addImage("door_locked", "sprites/enviroment/door_locked.png");
+        this.addImage("door_locked_horisontal", "sprites/enviroment/door_locked_horisontal.png");
+        this.addImage("door_unlocked", "sprites/enviroment/door_unlocked.png");
+        this.addImage("door_unlocked_horisontal", "sprites/enviroment/door_unlocked_horisontal.png");
+        this.addImage("colbox", "sprites/enviroment/colbox.png");
+
+        // Load item sprites
+        this.addImage("medkit", "sprites/enviroment/medkit.png");
+        this.addImage("sodacan", "sprites/enviroment/sodacan.png");
+        this.addImage("ammobag", "sprites/enviroment/ammobag.png");
+        this.addImage("shellbox", "sprites/enviroment/shellbox.png");
+        this.addImage("shotgun", "sprites/enviroment/shotgun.png");
+        this.addImage("rifle", "sprites/enviroment/rifle.png");
+
+        // Load particle sprites
+        this.addImage("shell_pistol", "sprites/particles/shell_pistol.png");
+        this.addImage("shell_rifle", "sprites/particles/shell_rifle.png");
+        this.addImage("shell_shotgun", "sprites/particles/shell_shotgun.png");
+        this.addImage("metal", "sprites/particles/metal.png");
+        this.addImage("yellow_metal", "sprites/particles/yellow_metal.png");
+        this.addImage("wood", "sprites/particles/wood.png");
+        this.addImage("glass", "sprites/particles/glass.png");
+
+        // Load UI sprites
+        this.addImage("main_menu_bg", "sprites/ui/main_menu_bg.png");
+        this.addImage("options_menu", "sprites/ui/options_menu.png");
+        this.addImage("controls_menu", "sprites/ui/controls_menu.png");
+        this.addImage("blank", "sprites/ui/blank.png");
+        this.addImage("pistol", "sprites/ui/pistol.png");
+        this.addImage("pistol_outline", "sprites/ui/pistol_outline.png");
+        this.addImage("shotgun", "sprites/ui/shotgun.png");
+        this.addImage("shotgun_outline", "sprites/ui/shotgun_outline.png");
+        this.addImage("shotgun_outline_pumped", "sprites/ui/shotgun_outline_pumped.png");
+        this.addImage("shotgun_pumped", "sprites/ui/shotgun_pumped.png");
+        this.addImage("rifle", "sprites/ui/rifle.png");
+        this.addImage("rifle_outline", "sprites/ui/rifle_outline.png");
+        this.addImage("rifle_empty", "sprites/ui/rifle_empty.png");
+        this.addImage("shotgun_empty", "sprites/ui/shotgun_empty.png");
+
     }
 }
