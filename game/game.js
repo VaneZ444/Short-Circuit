@@ -292,20 +292,20 @@ class Pistol extends Weapon {
         super("pistol", 8, 8, Infinity, 2455, 6.5, true); 
     }
     reload() {
-        if (Game.player.isReloading === false && this.maxAmmo !== this.currentAmmo) {
-            Game.player.isReloading = true;
+        if (Game.player.reloads === false && this.maxAmmo !== this.currentAmmo) {
+            Game.player.reloads = true;
             Game.player.aims = false;
             Game.player.currMoveSpeed = Game.player.speedReloading;
             SoundEvents.playSound("pistol_reload");
             setTimeout(() => {
                 Game.player.currMoveSpeed =  Game.player.speedDefault;;
-                Game.player.isReloading = false;
+                Game.player.reloads = false;
                 this.currentAmmo = 8;
             }, this.reloadDuration);
         }
     }
     shoot() {
-        if (this.currentAmmo > 0 && Game.player.isReloading === false) {
+        if (this.currentAmmo > 0 && Game.player.reloads === false) {
             this.currentAmmo--;
             BulletManager.shootPlayerBullet(
                 Game.player.position.x + Game.player.size.x/2, 
@@ -334,7 +334,7 @@ class Shotgun extends Weapon {
 
     
     shoot() {
-        if ((this.currentAmmo > 0 || this.shotgunChamber) && !Game.player.isReloading) {
+        if ((this.currentAmmo > 0 || this.shotgunChamber) && !Game.player.reloads) {
             if (this.shotgunChamber === 1 && !this.pumping) {
                 this.shotgunChamber = 0;
                 PlayerComponent.sprite = "sprites/player/shotgun_shoot.png";
@@ -391,8 +391,8 @@ class Shotgun extends Weapon {
         if (this.shotgunChamber === 0 && this.currentAmmo !== 0) {
             await this.pump(); 
         }
-        if (this.ammoReserve > 0 && Game.player.isReloading === false && this.maxAmmo !== this.currentAmmo) {
-            Game.player.isReloading = true;
+        if (this.ammoReserve > 0 && Game.player.reloads === false && this.maxAmmo !== this.currentAmmo) {
+            Game.player.reloads = true;
             Game.player.aims = false;
             Game.player.currMoveSpeed =  Game.player.speedReloading;
             if (this.shotgunChamber === 0) {
@@ -406,7 +406,7 @@ class Shotgun extends Weapon {
             }
 
             Game.player.currMoveSpeed =  Game.player.speedDefault;;
-            Game.player.isReloading = false;
+            Game.player.reloads = false;
         }
     }
 }
@@ -462,8 +462,8 @@ class Rifle extends Weapon {
 
     
     reload() {
-        if (this.ammoReserve > 0 && Game.player.isReloading === false && this.maxAmmo !== this.currentAmmo) {
-            Game.player.isReloading = true;
+        if (this.ammoReserve > 0 && Game.player.reloads === false && this.maxAmmo !== this.currentAmmo) {
+            Game.player.reloads = true;
             let ammoNeeded = this.maxAmmo - this.currentAmmo;
             let ammoToAdd = Math.min(ammoNeeded, this.ammoReserve);
             Game.player.aims = false;
@@ -471,7 +471,7 @@ class Rifle extends Weapon {
             SoundEvents.playSound("rifle_reload");
             
             setTimeout(() => {
-                Game.player.isReloading = false;
+                Game.player.reloads = false;
                 Game.player.currMoveSpeed =  Game.player.speedDefault;;
                 this.currentAmmo += ammoToAdd;
                 this.ammoReserve -= ammoToAdd;
@@ -507,6 +507,7 @@ class MeleeAttack {
             console.log('swing started')
             this.damaged = false;
             this.isSwinging = true;
+            this.player.swings = true;
             this.swingAngle = +Math.PI / 4; 
             this.cooldown = this.cooldownDuration; 
             SoundEvents.playSound("swing");
@@ -515,15 +516,15 @@ class MeleeAttack {
 
     update() {
         if (this.cooldown > 0) {
+            this.player.swingOnCooldown = true;
             const progress = 1 - (this.cooldown / 60);
-            this.player.currMoveSpeed = this.player.speedMelee + (this.player.speedDefault - this.player.speedMelee) * progress;
+            this.player.speedCooldown = this.player.speedMelee + (this.player.speedDefault - this.player.speedMelee) * progress;
             this.cooldown -= 1;
         } else {
-            this.player.currMoveSpeed = this.player.speedDefault;
+            this.player.swingOnCooldown = false;
         }
 
         if (this.isSwinging) {
-            this.player.currMoveSpeed = this.meleeMoveSpeed;
             this.angle = this.player.plComponent.angle;
             this.swingAngle -= this.swingSpeed; 
 
@@ -532,8 +533,8 @@ class MeleeAttack {
 
             
             if (this.swingAngle <= -Math.PI / 1) {
-                this.player.currMoveSpeed = this.player.speedDefault;
                 this.isSwinging = false;
+                this.player.swings = false;
             }
         }
     }
@@ -2175,7 +2176,9 @@ static loadSaveData(data) {
 class Player {
     constructor() {
         this.aims = false;
-        this.isReloading = false;
+        this.reloads = false;
+        this.swings = false;
+        this.swingOnCooldown = false;
         this.angle = 0;
         this.maxHealth = 100;
         this.health = this.maxHealth;
@@ -2192,6 +2195,7 @@ class Player {
         this.speedMelee = 0.8;
         this.speedSighted = 0.8;
         this.speedReloading = 1.5; 
+        this.speedCooldown = 1;
         this.currMoveSpeed = this.speedDefault; 
         this.size = new Vector2(30, 30);
         this.currentWeapon = this.weapons.pistol; 
@@ -2225,6 +2229,11 @@ class Player {
         if (this.moveLeft) this.velocity.x -= 1;
         if (this.moveRight) this.velocity.x += 1;
 
+        if (this.reloads) this.currMoveSpeed = this.speedReloading;
+        if (this.swingOnCooldown) this.currMoveSpeed = this.speedCooldown;
+        if (this.swings) this.currMoveSpeed = this.speedMelee;
+        if (this.aims) this.currMoveSpeed = this.speedSighted;
+        if (!(this.aims || this.swings || this.reloads || this.swingOnCooldown)) this.currMoveSpeed = this.speedDefault;
         
         if (this.velocity.x !== 0 || this.velocity.y !== 0) {
             this.velocity.normalize();
@@ -2233,7 +2242,7 @@ class Player {
     }
 
     switchWeapon(weaponName) {
-        if (this.weapons[weaponName] && this.weapons[weaponName].isUnlocked && !this.isReloading) {
+        if (this.weapons[weaponName] && this.weapons[weaponName].isUnlocked && !this.reloads) {
             this.currentWeapon = this.weapons[weaponName];
         } else {
         }
@@ -2254,14 +2263,14 @@ class Player {
     }
 
     startAiming() {
-        if (this.isReloading === false) {
+        if (this.reloads === false) {
             this.aims = true;
             this.currMoveSpeed = Game.player.speedSighted; 
         }
     }
 
     stopAiming() {
-        if (this.isReloading === false) {
+        if (this.reloads === false) {
             this.aims = false;
             this.currMoveSpeed = Game.player.speedDefault;
         }
